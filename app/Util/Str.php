@@ -95,6 +95,6 @@ class Str
      */
     public static function isValid(string $str): bool
     {
-        return preg_match('/^[A-Za-z0-9]+$/', $str);
+        return (bool)preg_match('/^[A-Za-z0-9]+$/', $str);
     }
 }
