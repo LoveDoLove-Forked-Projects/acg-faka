@@ -57,6 +57,10 @@ class Bill extends Model
      */
     public static function create(User|int|string $user, float $amount, int $type, string $log, int $currency = 0, bool $total = true): void
     {
+        if ($amount <= 0) {
+            throw new JSONException("非法操作");
+        }
+
         if (is_int($user) || is_string($user)) {
             $user = User::query()->find($user);
             if (!$user) {

@@ -47,10 +47,14 @@ class AgentMember extends User
     {
         $to = $this->request->post("id");
         $amount = $this->request->post("amount", Filter::FLOAT);
+        $userId = $this->getUser()->id;
+
+        if ($to == $userId) {
+            throw new JSONException("非法操作");
+        }
 
         DB::connection()->getPdo()->exec("set session transaction isolation level serializable");
-        Db::transaction(function () use ($to, $amount) {
-            $userId = $this->getUser()->id;
+        Db::transaction(function () use ($to, $amount, $userId) {
             \App\Model\Bill::create($userId, $amount, 0, "转账给ID:{$to}", 0, false);
             \App\Model\Bill::create($to, $amount, 1, "来自ID:{$userId}的转账", 0, false);
         });

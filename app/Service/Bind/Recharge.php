@@ -20,6 +20,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use Kernel\Annotation\Inject;
 use Kernel\Exception\JSONException;
 use Kernel\Exception\RuntimeException;
+use Kernel\Waf\Firewall;
 
 class Recharge implements \App\Service\Recharge
 {
@@ -67,7 +68,7 @@ class Recharge implements \App\Service\Recharge
         if (!$callbackDomain) {
             $callbackDomain = $clientDomain;
         }
- 
+
         return Db::transaction(function () use ($user, $pay, $amount, $callbackDomain, $clientDomain) {
             $order = new UserRecharge();
             $order->trade_no = Str::generateTradeNo();
@@ -137,9 +138,17 @@ class Recharge implements \App\Service\Recharge
      * @param array $map
      * @return string
      * @throws JSONException
+     * @throws RuntimeException
+     * @throws \HTMLPurifier_Exception
+     * @throws \ReflectionException
      */
     public function callback(string $handle, array $map): string
     {
+        $handle = Firewall::inst()->xssKiller($handle);
+        if (!Str::isValid($handle) || !PayConfig::isValid($handle)) {
+            throw new JSONException("handle not found");
+        }
+
         $callback = $this->order->callbackInitialize($handle, $map);
         $json = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 

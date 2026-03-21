@@ -88,4 +88,13 @@ class Str
             3 => mt_rand(1000000, 99999999)
         };
     }
+
+    /**
+     * @param string $str
+     * @return bool
+     */
+    public static function isValid(string $str): bool
+    {
+        return preg_match('/^[A-Za-z0-9]+$/', $str);
+    }
 }

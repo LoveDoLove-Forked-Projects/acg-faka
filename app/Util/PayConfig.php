@@ -6,6 +6,16 @@ namespace App\Util;
 
 class PayConfig
 {
+
+    /**
+     * @param string $handle
+     * @return bool
+     */
+    public static function isValid(string $handle): bool
+    {
+        return is_file(BASE_PATH . '/app/Pay/' . $handle . '/Impl/Pay.php');
+    }
+
     /**
      * @param string $handle
      * @return array|null
