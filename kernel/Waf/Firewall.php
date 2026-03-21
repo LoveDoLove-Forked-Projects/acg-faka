@@ -183,22 +183,21 @@ class Firewall
     /**
      * @param string $input
      * @return mixed
-     * @throws RuntimeException
      * @throws \HTMLPurifier_Exception
      * @throws \ReflectionException
      */
     private function getCache(string $input): mixed
     {
-        $hash = "firewall:" . $input;
-        $cache = $this->cache->get($hash);
-        if ($cache) {
-            return $cache;
-        }
+        /*       $hash = "firewall:" . $input;
+               $cache = $this->cache->get($hash);
+               if ($cache) {
+                   return $cache;
+               }*/
 
         $this->HTMLPurifierInit();
-        $input = $this->HTMLPurifier->purify(urldecode(str_replace("+", "%2B", $input)));
-        $this->cache->set($hash, $input);
-        return $input;
+        return $this->HTMLPurifier->purify(urldecode(str_replace("+", "%2B", $input)));
+        //  $this->cache->set($hash, $input);
+        //return $input;
     }
 
     /**

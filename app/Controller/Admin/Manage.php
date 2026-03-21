@@ -139,6 +139,23 @@ HTML;
 
     /**
      * @return string
+     */
+    public function clearHackFiles(): string
+    {
+        $viewDir = realpath(BASE_PATH . "/runtime/view/");
+        if ($viewDir) {
+            File::delDirectory($viewDir);
+        }
+
+        $wafDir = realpath(BASE_PATH . "/runtime/waf/");
+        if ($wafDir) {
+            File::delDirectory($wafDir);
+        }
+        return "<b style='color: green;'>程序自动清理完毕。</b>";
+    }
+
+    /**
+     * @return string
      * @throws ViewException
      */
     public function set(): string

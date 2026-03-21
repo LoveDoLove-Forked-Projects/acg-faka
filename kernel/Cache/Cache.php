@@ -38,9 +38,9 @@ class Cache
         $hashFile = $this->cacheDir . md5($name);
         File::writeForLock($hashFile, function (string $contents) use ($value) {
             return match ($this->resolve) {
-                self::OPTIONS_SERIALIZE => serialize($value),
-                self::OPTIONS_JSON => json_encode($value),
-                default => $value,
+                self::OPTIONS_SERIALIZE => base64_encode(serialize($value)),
+                self::OPTIONS_JSON => base64_encode(json_encode($value)),
+                default => base64_encode($value),
             };
         });
     }
@@ -74,9 +74,9 @@ class Cache
     {
         return File::read($this->cacheDir . md5($name), function (string $contents) {
             return match ($this->resolve) {
-                self::OPTIONS_SERIALIZE => unserialize($contents),
-                self::OPTIONS_JSON => json_decode($contents, true),
-                default => $contents,
+                self::OPTIONS_SERIALIZE => unserialize(base64_decode($contents)),
+                self::OPTIONS_JSON => json_decode(base64_decode($contents, true)),
+                default => base64_decode($contents),
             };
         });
     }
