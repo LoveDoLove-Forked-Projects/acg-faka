@@ -70,14 +70,29 @@ class Security extends User
             'id'
         ];
 
-        foreach ($fields as $value){
+        foreach ($fields as $value) {
             unset($plugin[$value]);
         }
 
         foreach ($plugin as $key => $val) {
-            if (in_array(strtolower($key) , $fields)){
+            $key = strtolower(trim((string)$key));
+
+            if ($key === '') {
+                throw new JSONException('非法字段名#0');
+            }
+
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
+                throw new JSONException('非法字段名#1');
+            }
+
+            if (is_array($val) || is_object($val)) {
+                throw new JSONException('字段格式错误：' . $key);
+            }
+
+            if (in_array($key, $fields)) {
                 throw new JSONException("are you an idiot?");
             }
+
             $user->$key = $val;
         }
 
