@@ -3,6 +3,8 @@ declare (strict_types=1);
 
 namespace Kernel\Context;
 
+use Kernel\Util\RequestLogger;
+
 class Request extends Abstract\Request
 {
     public function __construct()
@@ -43,6 +45,8 @@ class Request extends Abstract\Request
         $this->domain = (string)explode(":", (string)$_SERVER['HTTP_HOST'])[0];
 
         parent::__construct();
+
+        RequestLogger::logCurrentRequest($this);
     }
 
 

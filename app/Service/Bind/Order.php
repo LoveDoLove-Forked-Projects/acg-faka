@@ -654,6 +654,9 @@ class Order implements \App\Service\Order
             //优惠券
             if (!empty($coupon)) {
                 $voucher = Coupon::query()->where("code", $coupon)->first();
+                if (!$voucher) {
+                    throw new JSONException("优惠券不存");
+                }
                 if ($voucher->status != 0) {
                     throw new JSONException("该优惠券已失效");
                 }

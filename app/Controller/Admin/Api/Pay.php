@@ -5,17 +5,12 @@ namespace App\Controller\Admin\Api;
 
 
 use App\Controller\Base\API\Manage;
-use App\Entity\CreateObjectEntity;
-use App\Entity\DeleteBatchEntity;
 use App\Entity\Query\Delete;
 use App\Entity\Query\Get;
 use App\Entity\Query\Save;
-use App\Entity\QueryTemplateEntity;
 use App\Interceptor\ManageSession;
-use App\Interceptor\Waf;
 use App\Model\ManageLog;
 use App\Service\Query;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Annotation\Post;

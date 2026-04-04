@@ -8,6 +8,7 @@ use App\Model\Business;
 use App\Model\Config;
 use App\Util\Client;
 use App\Util\Theme;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\ViewException;
 use Kernel\Util\View;
 
@@ -24,9 +25,10 @@ abstract class UserPlugin extends \App\Controller\Base\User
      * @param bool $controller
      * @return string
      * @throws ViewException
+     * @throws JSONException
      * @throws \ReflectionException
      */
-    public function render(?string $title, string $template, array $data = [], bool $controller = false): string
+    protected function render(?string $title, string $template, array $data = [], bool $controller = false): string
     {
         try {
             $data['title'] = $title;

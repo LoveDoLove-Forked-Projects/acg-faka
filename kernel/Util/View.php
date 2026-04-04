@@ -87,6 +87,10 @@ class View
             return false;
         }
 
+        if (str_contains($file, '../') || str_contains($file, '..\\') || $file === '..') {
+            return false;
+        }
+
         return true;
     }
 }

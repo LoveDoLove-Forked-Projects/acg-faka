@@ -5,6 +5,7 @@ namespace App\Controller\Base\View;
 
 use App\Model\Config;
 use App\Util\Client;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\ViewException;
 use Kernel\Util\View;
 
@@ -18,10 +19,12 @@ abstract class ManagePlugin extends \App\Controller\Base\Manage
      * @param string|null $title
      * @param string $template
      * @param array $data
+     * @param bool $controller
      * @return string
-     * @throws \Kernel\Exception\ViewException
+     * @throws ViewException
+     * @throws JSONException
      */
-    public function render(?string $title, string $template, array $data = [], bool $controller = false): string
+    protected function render(?string $title, string $template, array $data = [], bool $controller = false): string
     {
         try {
             $data['title'] = $title;

@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin\Api;
 
 
-use App\Entity\CreateObjectEntity;
-use App\Entity\DeleteBatchEntity;
 use App\Entity\Query\Delete;
 use App\Entity\Query\Get;
 use App\Entity\Query\Save;

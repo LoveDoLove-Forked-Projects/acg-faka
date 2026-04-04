@@ -5,7 +5,6 @@ namespace App\Controller\Admin\Api;
 
 use App\Controller\Base\API\Manage;
 use App\Entity\Query\Get;
-use App\Entity\QueryTemplateEntity;
 use App\Interceptor\ManageSession;
 use App\Model\ManageLog;
 use App\Model\UserRecharge;

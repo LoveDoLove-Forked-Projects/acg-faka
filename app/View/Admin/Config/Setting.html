@@ -74,6 +74,31 @@
                             </div>
                             <!--end::Input group-->
 
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <!--begin::Label-->
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">关闭请求日志(建议开启)</label>
+                                <!--begin::Label-->
+                                <!--begin::Label-->
+                                <div class="col-lg-8 d-flex align-items-center">
+                                    <div class="form-check form-check-solid form-switch fv-row">
+                                        <input class="form-check-input w-45px h-30px" type="checkbox"
+                                               name="request_log"
+                                               value="1" #{if $config.request_log== 1} checked #{/if}/>
+                                        <label class="form-check-label"></label>
+                                    </div>
+
+                                </div>
+                                <!--begin::Hint-->
+                                <div class="form-text text-success fw-bold">
+                                    此配置为临时选项，将在下一个版本中移除。当前我们正在对程序进行大幅优化。为便于排查现阶段系统可能出现的问题，本版本将开启请求日志功能，以协助技术人员更快速、准确地定位问题。如您的网站出现异常，请及时联系官方人员，我们将结合相关日志信息为您进行排查与处理。
+                                </div>
+                                <!--end::Hint-->
+                                <!--begin::Label-->
+                            </div>
+                            <!--end::Input group-->
+
                             <!--begin::Input group-->
                             <div class="row mb-6">
                                 <!--begin::Label-->

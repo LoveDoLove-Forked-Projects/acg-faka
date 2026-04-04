@@ -13,7 +13,7 @@ abstract class User
      * 获取会员对象数据
      * @return \App\Model\User|null
      */
-    public function getUser(): ?\App\Model\User
+    protected function getUser(): ?\App\Model\User
     {
         return Context::get(\App\Consts\User::SESSION);
     }
@@ -21,7 +21,7 @@ abstract class User
     /**
      * @return UserGroup|null
      */
-    public function getUserGroup(): ?UserGroup
+    protected function getUserGroup(): ?UserGroup
     {
         $user = $this->getUser();
         if (!$user) {

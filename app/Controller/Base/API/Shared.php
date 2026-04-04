@@ -19,7 +19,7 @@ abstract class Shared extends \App\Controller\Base\Shared
      * @param array|null $data
      * @return array
      */
-    public function json(int $code = 200, ?string $message = null, ?array $data = []): array
+    protected function json(int $code = 200, ?string $message = null, ?array $data = []): array
     {
         $json['code'] = $code;
         $message ? $json['msg'] = $message : null;

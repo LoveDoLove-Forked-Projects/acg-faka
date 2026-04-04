@@ -8,6 +8,7 @@ use App\Model\Business;
 use App\Model\Config;
 use App\Util\Client;
 use App\Util\Theme;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\ViewException;
 use Kernel\Util\View;
 
@@ -23,8 +24,9 @@ abstract class User extends \App\Controller\Base\User
      * @param array $data
      * @return string
      * @throws ViewException
+     * @throws JSONException
      */
-    public function render(string $title, string $template, array $data = []): string
+    protected function render(string $title, string $template, array $data = []): string
     {
         try {
             //加载helper
@@ -49,10 +51,11 @@ abstract class User extends \App\Controller\Base\User
      * @param string $default
      * @param array $data
      * @return string
+     * @throws JSONException
      * @throws ViewException
      * @throws \ReflectionException
      */
-    public function theme(string $title, string $template, string $default, array $data = []): string
+    protected function theme(string $title, string $template, string $default, array $data = []): string
     {
         try {
             //加载helper

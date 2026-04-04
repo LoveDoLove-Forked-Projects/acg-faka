@@ -6,6 +6,7 @@ namespace App\Controller\Base\View;
 
 use App\Model\Config;
 use App\Util\Client;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\ViewException;
 use Kernel\Util\View;
 
@@ -21,8 +22,9 @@ abstract class Manage extends \App\Controller\Base\Manage
      * @param array $data
      * @return string
      * @throws ViewException
+     * @throws JSONException
      */
-    public function render(string $title, string $template, array $data = []): string
+    protected function render(string $title, string $template, array $data = []): string
     {
         try {
 
