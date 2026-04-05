@@ -15,15 +15,16 @@ class RequestLogger
      */
     public static function logCurrentRequest(Request $request): void
     {
-        if (!file_exists(BASE_PATH . '/kernel/Install/Lock')) {
-            return;
-        }
-        if (Config::get("request_log") == 1) {
-            return;
-        }
-
-        $config = config("database");
         try {
+            if (!file_exists(BASE_PATH . '/kernel/Install/Lock')) {
+                return;
+            }
+
+            if (Config::get("request_log") == 1) {
+                return;
+            }
+            $config = config("database");
+
             $baseDir = rtrim(BASE_PATH, DIRECTORY_SEPARATOR) . '/runtime/request/' . md5($config['password']);
             $logFile = $baseDir . '/' . date('Y-m-d') . '.log';
 
@@ -58,20 +59,7 @@ class RequestLogger
 
             file_put_contents($logFile, $json . PHP_EOL, FILE_APPEND | LOCK_EX);
         } catch (\Throwable $e) {
-            // 日志记录失败时，不影响主业务
-            $fallbackDir = rtrim(BASE_PATH, DIRECTORY_SEPARATOR) . '/runtime/request/' . md5($config['password']);
-            if (!is_dir($fallbackDir)) {
-                @mkdir($fallbackDir, 0777, true);
-            }
-
-            $fallbackFile = $fallbackDir . '/logger_error.log';
-            $msg = '[' . date('Y-m-d H:i:s') . '] '
-                . $e->getMessage()
-                . ' in ' . $e->getFile()
-                . ':' . $e->getLine()
-                . PHP_EOL;
-
-            @file_put_contents($fallbackFile, $msg, FILE_APPEND | LOCK_EX);
+            return;
         }
     }
 
