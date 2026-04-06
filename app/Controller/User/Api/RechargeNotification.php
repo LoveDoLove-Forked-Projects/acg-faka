@@ -6,9 +6,11 @@ namespace App\Controller\User\Api;
 
 use App\Controller\Base\API\User;
 use App\Interceptor\Waf;
+use App\Util\Str;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Context\Interface\Request;
+use Kernel\Exception\JSONException;
 
 #[Interceptor(Waf::class, Interceptor::TYPE_API)]
 class RechargeNotification extends User
@@ -19,6 +21,7 @@ class RechargeNotification extends User
     /**
      * @param Request $request
      * @return string
+     * @throws JSONException
      */
     public function callback(Request $request): string
     {
@@ -31,6 +34,10 @@ class RechargeNotification extends User
         }
         if (isset($data['s'])) unset($data['s']);
         if (isset($data['_PARAMETER'])) unset($data['_PARAMETER']);
+
+        if (isset($data['sign']) && Str::isInvalidSign($data['sign'])) {
+            throw new JSONException("非法签名");
+        }
         return $this->recharge->callback($handle, $data);
     }
 }

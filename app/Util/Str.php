@@ -33,6 +33,21 @@ class Str
         return substr($md5, 0, $length);
     }
 
+    /**
+     * @param mixed $sign
+     * @return bool
+     */
+    public static function isInvalidSign(mixed $sign): bool
+    {
+        if (!is_string($sign)) {
+            return true;
+        }
+
+        $sign = trim($sign);
+
+        return $sign === '';
+    }
+
 
     /**
      * 获取数据签名
@@ -96,5 +111,20 @@ class Str
     public static function isValid(string $str): bool
     {
         return (bool)preg_match('/^[A-Za-z0-9]+$/', $str);
+    }
+
+
+    /**
+     * @param mixed $str
+     * @param string $local
+     * @return bool
+     */
+    public static function safetyEquals(mixed $str, string $local): bool
+    {
+        if (!is_string($str) || $str === '') {
+            return false;
+        }
+
+        return hash_equals($local, $str);
     }
 }

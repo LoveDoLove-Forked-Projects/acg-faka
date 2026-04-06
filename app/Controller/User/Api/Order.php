@@ -10,6 +10,7 @@ use App\Interceptor\Waf;
 use App\Model\Config;
 use App\Model\UserRecharge;
 use App\Util\Captcha;
+use App\Util\Str;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Annotation\Post;
@@ -49,6 +50,7 @@ class Order extends User
     /**
      * @param Request $request
      * @return string
+     * @throws JSONException
      */
     public function callback(Request $request): string
     {
@@ -61,6 +63,11 @@ class Order extends User
         }
         if (isset($data['s'])) unset($data['s']);
         if (isset($data['_PARAMETER'])) unset($data['_PARAMETER']);
+
+        if (isset($data['sign']) && Str::isInvalidSign($data['sign'])) {
+            throw new JSONException("非法签名");
+        }
+
         return $this->order->callback($handle, $data);
     }
 

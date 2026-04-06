@@ -10,7 +10,6 @@ use Kernel\Exception\NotFoundException;
 use Kernel\Plugin\Hook;
 use Kernel\Util\Context;
 use Kernel\Util\Plugin;
-use Kernel\Util\RequestLogger;
 use Kernel\Waf\Firewall;
 
 
@@ -96,9 +95,6 @@ try {
     $capsule->setAsGlobal();
     // 启动Eloquent
     $capsule->bootEloquent();
-
-    //记录请求日志
-    RequestLogger::logCurrentRequest(Context::get(\Kernel\Context\Interface\Request::class));
 
     //插件库
     if (Context::get(Base::STORE_STATUS) && Context::get(Base::IS_INSTALL)) {
