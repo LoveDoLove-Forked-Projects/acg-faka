@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $nicename
  * @property string $alipay
  * @property string $wechat
+ * @property string $wallet_address
  */
 class User extends Model
 {

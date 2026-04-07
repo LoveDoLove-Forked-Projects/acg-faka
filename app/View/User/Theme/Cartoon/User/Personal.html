@@ -36,6 +36,7 @@
                                 <select name="settlement">
                                     <option value="0" #{if $user.settlement == 0} selected #{/if}>支付宝</option>
                                     <option value="1" #{if $user.settlement == 1} selected #{/if}>微信</option>
+                                    <option value="3" #{if $user.settlement == 3} selected #{/if}>USDT(TRC20)</option>
                                 </select>
                             </div>
                         </div>
@@ -44,6 +45,13 @@
                             <div class="form-body"><input type="text" value="#{$user.alipay}" name="alipay"
                                                           autocomplete="off"
                                                           placeholder="兑现使用的支付宝账号" class="layui-input"
+                                                          style="color: #ff9191;width: 320px;"></div>
+                        </div>
+                        <div>
+                            <div class="form-header">钱包地址(TRC20)</div>
+                            <div class="form-body"><input type="text" value="#{$user.wallet_address}" name="wallet_address"
+                                                          autocomplete="off"
+                                                          placeholder="兑现使用的钱包地址" class="layui-input"
                                                           style="color: #ff9191;width: 320px;"></div>
                         </div>
                         <div>

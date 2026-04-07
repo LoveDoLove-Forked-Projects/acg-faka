@@ -39,19 +39,23 @@
                     title: "打款",
                     show: _ => _.status === 0,
                     click: (event, value, map, index) => {
+
+                        const cardType = ["支付宝", "微信", "余额", "USDT(TRC20)"];
+                        const account = [map.user.alipay, "<div class='wx_qrcode'></div>", "", map.user.wallet_address];
+
                         layer.open({
                             type: 1,
                             title: '<i class="layui-icon">&#xe600;</i> CASH',
                             content: cashAccountHtml
                                 .replace("[amount]", '<b style="color: green;">¥ ' + map.amount + '</b>')
-                                .replace("[card]", map.card == 0 ? "支付宝" : "微信")
+                                .replace("[card]", cardType[map.card])
                                 .replace("[create_time]", map.create_time)
                                 .replace("[avatar]", map.user.avatar ? map.user.avatar : '/favicon.ico')
                                 .replace("[username]", map.user.username)
                                 .replace("[nicename]", map.user.nicename)
-                                .replace("[account]", map.card == 0 ? map.user.alipay : "<div class='wx_qrcode'></div>")
+                                .replace("[account]", account[map.card])
                             ,
-                            area: util.isPc() ? "420px" : ["100%", "100%"],
+                            area: util.isPc() ? "480px" : ["100%", "100%"],
                             btn: ['<i class="fa-duotone fa-regular fa-sack-dollar"></i> 已打款', '<i class="fa-duotone fa-regular fa-xmark"></i> 取消'],
                             success: () => {
                                 if (map.card == 1 && map?.user?.wechat) {
@@ -111,7 +115,7 @@
     ]);
 
     table.setSearch([
-        {title: "搜索会员", name: "equal-user_id", type: "remoteSelect" , dict: "user,id,username"},
+        {title: "搜索会员", name: "equal-user_id", type: "remoteSelect", dict: "user,id,username"},
         {
             title: "类型", name: "equal-type", type: "select", dict: "_cash_type"
         }, {

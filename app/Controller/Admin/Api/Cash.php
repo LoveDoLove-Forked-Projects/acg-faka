@@ -38,7 +38,7 @@ class Cash extends Manage
         $data = $this->query->get($get, function (Builder $builder) {
             return $builder->with([
                 'user' => function (Relation $relation) {
-                    $relation->select(["id", "username", "avatar", "nicename", "alipay", "wechat"]);
+                    $relation->select(["id", "username", "avatar", "nicename", "alipay", "wechat", "wallet_address"]);
                 }
             ]);
         });

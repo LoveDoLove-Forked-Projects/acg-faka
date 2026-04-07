@@ -72,6 +72,7 @@ const _Dict = new class _Dict extends _DictUtil {
             "_cash_wallet_type": [
                 {id: 0, "name": format.badge("支付宝", "a-badge-primary")},
                 {id: 1, "name": format.badge("微信", "a-badge-success")},
+                {id: 3, "name": format.badge("USDT(TRC20)", "a-badge-success")},
                 {id: 2, "name": format.badge("钱包余额", "a-badge-danger")}
             ],
             "_cash_order_type": [

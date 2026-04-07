@@ -68,6 +68,10 @@ class Order extends User
             throw new JSONException("非法签名");
         }
 
+        if (isset($data['signature']) && Str::isInvalidSign($data['signature'])) {
+            throw new JSONException("非法签名");
+        }
+
         return $this->order->callback($handle, $data);
     }
 

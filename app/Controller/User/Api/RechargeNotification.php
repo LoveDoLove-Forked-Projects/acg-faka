@@ -38,6 +38,11 @@ class RechargeNotification extends User
         if (isset($data['sign']) && Str::isInvalidSign($data['sign'])) {
             throw new JSONException("非法签名");
         }
+
+        if (isset($data['signature']) && Str::isInvalidSign($data['signature'])) {
+            throw new JSONException("非法签名");
+        }
+
         return $this->recharge->callback($handle, $data);
     }
 }

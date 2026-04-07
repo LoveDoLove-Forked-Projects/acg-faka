@@ -6,7 +6,6 @@ namespace App\Controller\User\Api;
 use App\Controller\Base\API\User;
 use App\Interceptor\UserSession;
 use App\Interceptor\Waf;
-use App\Model\Config;
 use App\Service\Email;
 use App\Service\Sms;
 use App\Util\Captcha;
@@ -16,6 +15,7 @@ use App\Util\Validation;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Exception\JSONException;
+use Kernel\Waf\Filter;
 
 #[Interceptor([Waf::class, UserSession::class], Interceptor::TYPE_API)]
 class Security extends User
@@ -28,18 +28,23 @@ class Security extends User
 
     /**
      * @return array
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function personal(): array
     {
         $user = $this->getUser();
-        $user->avatar = (string)$_POST['avatar'];
-        $user->qq = (string)$_POST['qq'];
-        $user->alipay = (string)$_POST['alipay'];
-        $user->nicename = (string)$_POST['nicename'];
-        $user->settlement = (int)$_POST['settlement'] == 0 ? 0 : 1;
+        $user->avatar = $this->request->post("avatar");
+        $user->qq = $this->request->post("qq");
+        $user->alipay = $this->request->post("alipay");
+        $user->nicename = $this->request->post("nicename");
+        $user->settlement = $this->request->post("settlement", Filter::INTEGER);
+        $user->wallet_address = $this->request->post("wallet_address");
 
-        $plugin = (array)$_POST['plugin'];
+        if (!in_array($user->settlement, [0, 1, 3])) {
+            throw new JSONException("不支持的结算方式");
+        }
+
+        $plugin = (array)$this->request->post("plugin");
 
         $fields = [
             'username',
@@ -96,7 +101,7 @@ class Security extends User
             $user->$key = $val;
         }
 
-        $wechat = (string)$_POST['wechat'];
+        $wechat = $this->request->post("wechat");
         if ($wechat != "") {
 
             $qrCode = QrCode::parse(BASE_PATH . $wechat);
@@ -114,7 +119,7 @@ class Security extends User
 
     /**
      * @return array
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function email(): array
     {
@@ -131,7 +136,7 @@ class Security extends User
 
     /**
      * @return array
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function phone(): array
     {
@@ -147,7 +152,7 @@ class Security extends User
     }
 
     /**
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function password(): array
     {
@@ -172,7 +177,7 @@ class Security extends User
     }
 
     /**
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function emailBindNew(): array
     {
@@ -193,7 +198,7 @@ class Security extends User
     }
 
     /**
-     * @throws \Kernel\Exception\JSONException
+     * @throws JSONException
      */
     public function phoneBindNew(): array
     {

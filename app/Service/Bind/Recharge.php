@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service\Bind;
 
 
+use App\Consts\Hook;
 use App\Entity\PayEntity;
 use App\Model\Bill;
 use App\Model\Config;
@@ -154,7 +155,7 @@ class Recharge implements \App\Service\Recharge
 
         DB::transaction(function () use ($handle, $map, $callback, $json) {
             //获取订单
-            $order = \App\Model\UserRecharge::query()->where("trade_no", $callback['trade_no'])->first();
+            $order = UserRecharge::query()->where("trade_no", $callback['trade_no'])->first();
 
             if (!$order) {
                 PayConfig::log($handle, "CALLBACK-RECHARGE", "订单不存在，接受数据：" . $json);
@@ -180,8 +181,9 @@ class Recharge implements \App\Service\Recharge
 
 
     /**
-     * @param \App\Model\UserRecharge $recharge
-     * @throws \Kernel\Exception\JSONException
+     * @param UserRecharge $recharge
+     * @throws JSONException
+     * @throws RuntimeException
      */
     public function orderSuccess(UserRecharge $recharge): void
     {
@@ -200,6 +202,9 @@ class Recharge implements \App\Service\Recharge
             }
         }
 
+        $pay = $recharge->pay;
+        hook(Hook::USER_API_RECHARGE_AFTER, $recharge, $pay);
+
         $recharge->save();
     }
 
@@ -207,7 +212,7 @@ class Recharge implements \App\Service\Recharge
     /**
      * @param float $amount
      * @return float
-     * @throws \Kernel\Exception\JSONException
+     * @throws RuntimeException
      */
     public function calcAmount(float $amount): float
     {

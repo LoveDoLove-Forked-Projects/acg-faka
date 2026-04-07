@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Consts;
 
+
 /**
  * Interface Hook
  * @package App\Consts
@@ -69,6 +70,10 @@ interface Hook
     const USER_API_ORDER_PAY_AFTER = 0x18;
     //客户下单后，发起支付之前，HOOK时传参：商品对象 $commodity, 订单对象 $order 支付对象 $pay
     const USER_API_ORDER_TRADE_PAY_BEGIN = 0x171;
+
+
+    //客户充值付款成功，UserRecharge $recharge, Pay $pay
+    const USER_API_RECHARGE_AFTER = 0x18191;
 
 
     //注册账号之前，可以做一些限制
