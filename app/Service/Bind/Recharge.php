@@ -151,24 +151,23 @@ class Recharge implements \App\Service\Recharge
         }
 
         $callback = $this->order->callbackInitialize($handle, $map);
-        $json = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        DB::transaction(function () use ($handle, $map, $callback, $json) {
+        DB::transaction(function () use ($handle, $map, $callback) {
             //获取订单
             $order = UserRecharge::query()->where("trade_no", $callback['trade_no'])->first();
 
             if (!$order) {
-                PayConfig::log($handle, "CALLBACK-RECHARGE", "订单不存在，接受数据：" . $json);
+                PayConfig::log($handle, "CALLBACK-RECHARGE", "订单不存在");
                 throw new JSONException("order not found");
             }
 
-            if ($order->status != 0) {
+            if ((int)$order->status !== 0) {
                 PayConfig::log($handle, "CALLBACK-RECHARGE", "重复通知，当前订单已支付");
                 throw new JSONException("order status error");
             }
 
-            if ($order->amount != $callback['amount']) {
-                PayConfig::log($handle, "CALLBACK-RECHARGE", "订单金额不匹配，接受数据：" . $json);
+            if ($order->amount !== (float)$callback['amount']) {
+                PayConfig::log($handle, "CALLBACK-RECHARGE", "订单金额不匹配");
                 throw new JSONException("amount error");
             }
 

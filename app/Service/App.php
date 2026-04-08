@@ -18,7 +18,7 @@ interface App
     const APP_URL = BASE_APP_SERVER;
     const MAIN_SERVER = "https://tencent.3rd.mcycdn.com";
     const STANDBY_SERVER1 = "https://byte.3rd.mcycdn.com";
-    const STANDBY_SERVER2 = "https://byte.3rd.mcycdn.com";
+    const STANDBY_SERVER2 = "https://standby.acgshe.com";
     const GENERAL_SERVER = "https://aliyun.3rd.mcycdn.com";
 
     /**

@@ -776,7 +776,6 @@ class Order implements \App\Service\Order
      */
     public function callbackInitialize(string $handle, array $map): array
     {
-        $json = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $payInfo = PayConfig::info($handle);
         $payConfig = PayConfig::config($handle);
         $callback = $payInfo['callback'];
@@ -796,7 +795,7 @@ class Order implements \App\Service\Order
             $signature = new $class;
             Context::set(\App\Consts\Pay::DAFA, $map);
             if (!$signature->verification($map, $payConfig)) {
-                PayConfig::log($handle, "CALLBACK", "签名验证失败，接受数据：" . $json);
+                PayConfig::log($handle, "CALLBACK", "签名验证失败");
                 throw new JSONException("sign error");
             }
             $map = Context::get(\App\Consts\Pay::DAFA);
@@ -804,8 +803,8 @@ class Order implements \App\Service\Order
 
         //验证状态
         if ($callback[\App\Consts\Pay::IS_STATUS]) {
-            if ($map[$callback[\App\Consts\Pay::FIELD_STATUS_KEY]] != $callback[\App\Consts\Pay::FIELD_STATUS_VALUE]) {
-                PayConfig::log($handle, "CALLBACK", "状态验证失败，接受数据：" . $json);
+            if ((string)$map[$callback[\App\Consts\Pay::FIELD_STATUS_KEY]] !== (string)$callback[\App\Consts\Pay::FIELD_STATUS_VALUE]) {
+                PayConfig::log($handle, "CALLBACK", "状态验证失败");
                 throw new JSONException("status error");
             }
         }
@@ -967,21 +966,20 @@ class Order implements \App\Service\Order
         }
 
         $callback = $this->callbackInitialize($handle, $map);
-        $json = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         DB::connection()->getPdo()->exec("set session transaction isolation level serializable");
-        DB::transaction(function () use ($handle, $map, $callback, $json) {
+        DB::transaction(function () use ($handle, $map, $callback) {
             //获取订单
             $order = \App\Model\Order::query()->where("trade_no", $callback['trade_no'])->first();
             if (!$order) {
-                PayConfig::log($handle, "CALLBACK", "订单不存在，接受数据：" . $json);
+                PayConfig::log($handle, "CALLBACK", "订单不存在");
                 throw new JSONException("order not found");
             }
-            if ($order->status != 0) {
+            if ((int)$order->status !== 0) {
                 PayConfig::log($handle, "CALLBACK", "重复通知，当前订单已支付");
                 throw new JSONException("order status error");
             }
-            if ($order->amount != $callback['amount']) {
-                PayConfig::log($handle, "CALLBACK", "订单金额不匹配，接受数据：" . $json);
+            if ($order->amount !== (float)$callback['amount']) {
+                PayConfig::log($handle, "CALLBACK", "订单金额不匹配");
                 throw new JSONException("amount error");
             }
             //第三方支付订单成功，累计充值

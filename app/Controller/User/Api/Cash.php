@@ -6,7 +6,6 @@ namespace App\Controller\User\Api;
 
 use App\Controller\Base\API\User;
 use App\Entity\Query\Get;
-use App\Entity\QueryTemplateEntity;
 use App\Interceptor\UserSession;
 use App\Interceptor\Waf;
 use App\Model\Config;
