@@ -815,6 +815,26 @@ class Order implements \App\Service\Order
 
 
     /**
+     * @param string $handle
+     * @param array $map
+     * @return string|null
+     */
+    public function getCallbackTradeNo(string $handle, array $map): ?string
+    {
+        $payInfo = PayConfig::info($handle);
+        $payConfig = PayConfig::config($handle);
+        $callback = $payInfo['callback'];
+
+        $autoload = BASE_PATH . '/app/Pay/' . $handle . "/Vendor/autoload.php";
+        if (file_exists($autoload)) {
+            require($autoload);
+        }
+
+        return $map[$callback[\App\Consts\Pay::FIELD_ORDER_KEY]] ?: null;
+    }
+
+
+    /**
      * @param \App\Model\Order $order
      * @return string
      * @throws JSONException
@@ -963,6 +983,22 @@ class Order implements \App\Service\Order
         $handle = Firewall::inst()->xssKiller($handle);
         if (!Str::isValid($handle) || !PayConfig::isValid($handle)) {
             throw new JSONException("handle not found");
+        }
+
+        $tradeNo = $this->getCallbackTradeNo($handle, $map);
+
+        if (!$tradeNo) {
+            throw new JSONException("order number not found");
+        }
+
+        $order = \App\Model\Order::with(['pay'])->where("trade_no", $tradeNo)->first();
+
+        if (!$order->pay) {
+            throw new JSONException("pay not found");
+        }
+
+        if ($order->pay->handle !== $handle) {
+            throw new JSONException("pay handle not found");
         }
 
         $callback = $this->callbackInitialize($handle, $map);

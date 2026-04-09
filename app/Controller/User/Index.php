@@ -13,6 +13,7 @@ use App\Service\Shop;
 use App\Util\Client;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\RuntimeException;
 use Kernel\Exception\ViewException;
 
@@ -26,6 +27,7 @@ class Index extends User
      * @return string
      * @throws RuntimeException
      * @throws ViewException
+     * @throws JSONException
      * @throws \ReflectionException
      */
     public function index(): string

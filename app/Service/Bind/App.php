@@ -15,6 +15,7 @@ use Kernel\Annotation\Inject;
 use Kernel\Consts\Base;
 use Kernel\Exception\JSONException;
 use Kernel\Util\Context;
+use Kernel\Util\Plugin;
 use Kernel\Util\SQL;
 
 /**
@@ -192,7 +193,7 @@ class App implements \App\Service\App
 
         if ($type == 0) {
             //安装
-            \Kernel\Util\Plugin::runHookState($key, \Kernel\Annotation\Plugin::INSTALL);
+            Plugin::runHookState($key, \Kernel\Annotation\Plugin::INSTALL);
         }
     }
 
@@ -239,7 +240,13 @@ class App implements \App\Service\App
         }
 
         if ($type == 0) {
-            \Kernel\Util\Plugin::runHookState($key, \Kernel\Annotation\Plugin::UPGRADE);
+            Plugin::runHookState($key, \Kernel\Annotation\Plugin::UPGRADE);
+        } elseif ($type == 2) {
+            //清空模版缓存
+            $viewDir = realpath(BASE_PATH . "/runtime/view/");
+            if ($viewDir) {
+                File::delDirectory($viewDir);
+            }
         }
     }
 

@@ -16,6 +16,7 @@ use App\Model\UserGroup;
 use App\Service\Shared;
 use App\Util\Client;
 use App\Util\Ini;
+use App\Util\Tree;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Kernel\Annotation\Inject;
@@ -108,6 +109,7 @@ class Shop implements \App\Service\Shop
 
         $array = $category->toArray();
         $array = array_values($array);
+        $array = Tree::generate($array);
 
         $commodityRecommend = Config::get("commodity_recommend");
         if ($commodityRecommend == 1 && $master) {

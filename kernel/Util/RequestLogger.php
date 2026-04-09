@@ -34,11 +34,12 @@ class RequestLogger
                 'time' => Date::current(),
                 'ip' => Client::getAddress(),
                 'method' => $_SERVER['REQUEST_METHOD'] ?? '',
-                'uri' => $request->uri(),
+                'uri' => $_SERVER['REQUEST_URI'],
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
                 'referer' => $_SERVER['HTTP_REFERER'] ?? '',
                 'get' => $request->get(),
                 'post' => $request->post(),
+                'json' => $request->json(),
                 'raw_body' => $request->raw(),
                 'cookies' => $request->cookie(),
                 'headers' => $request->header()

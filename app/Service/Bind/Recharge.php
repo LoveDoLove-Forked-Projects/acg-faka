@@ -150,6 +150,22 @@ class Recharge implements \App\Service\Recharge
             throw new JSONException("handle not found");
         }
 
+        $tradeNo = $this->order->getCallbackTradeNo($handle, $map);
+
+        if (!$tradeNo) {
+            throw new JSONException("order number not found");
+        }
+
+        $order = UserRecharge::with(['pay'])->where("trade_no", $tradeNo)->first();
+
+        if (!$order->pay) {
+            throw new JSONException("pay not found");
+        }
+
+        if ($order->pay->handle !== $handle) {
+            throw new JSONException("pay handle not found");
+        }
+
         $callback = $this->order->callbackInitialize($handle, $map);
 
         DB::transaction(function () use ($handle, $map, $callback) {

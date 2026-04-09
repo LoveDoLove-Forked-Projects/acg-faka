@@ -10,6 +10,7 @@ use Kernel\Exception\NotFoundException;
 use Kernel\Plugin\Hook;
 use Kernel\Util\Context;
 use Kernel\Util\Plugin;
+use Kernel\Util\RequestLogger;
 use Kernel\Waf\Firewall;
 
 
@@ -105,6 +106,9 @@ try {
         hook(\App\Consts\Hook::KERNEL_INIT);
     }
 
+
+    //记录日志
+    RequestLogger::logCurrentRequest(Context::get(\Kernel\Context\Interface\Request::class));
 
     //检测类是否存在
     if (!class_exists($controller)) {

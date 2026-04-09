@@ -89,6 +89,12 @@ interface Order
      */
     public function callback(string $handle, array $map): string;
 
+    /**
+     * @param string $handle
+     * @param array $map
+     * @return string|null
+     */
+    public function getCallbackTradeNo(string $handle, array $map): ?string;
 
     /**
      * @param \App\Model\Order $order
