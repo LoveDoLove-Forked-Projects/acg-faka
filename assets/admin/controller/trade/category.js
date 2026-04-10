@@ -18,7 +18,7 @@
                             type: "treeSelect",
                             dict: "category->owner=0,id,name,pid&tree=true",
                             placeholder: "父级分类，可不选",
-                            parent: false
+                            parent: true
                         },
                         {
                             title: "图标",
