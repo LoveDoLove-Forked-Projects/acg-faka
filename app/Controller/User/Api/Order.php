@@ -57,12 +57,21 @@ class Order extends User
         $handle = $_GET['_PARAMETER'][0];
         foreach (['unsafePost', 'unsafeJson', 'unsafeGet'] as $method) {
             $data = $request->$method();
+            if (isset($data['s'])) unset($data['s']);
+            if (isset($data['_PARAMETER'])) unset($data['_PARAMETER']);
+
             if (!empty($data)) {
                 break;
             }
         }
-        if (isset($data['s'])) unset($data['s']);
-        if (isset($data['_PARAMETER'])) unset($data['_PARAMETER']);
+
+        if (empty($data)) {
+            $data = json_decode($request->raw(), true);
+        }
+
+        if (empty($data)) {
+            throw new JSONException("数据为空");
+        }
 
         if (isset($data['sign']) && Str::isInvalidSign($data['sign'])) {
             throw new JSONException("非法签名");

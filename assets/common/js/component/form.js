@@ -839,7 +839,7 @@ class Form {
         let val = [];
 
         if (util.checkPropertyExistence(this.opt.assign, form.name)) {
-            val = util.parseStringObject(this.opt.assign, form.name);
+            val = util.parseStringObject(this.opt.assign, form.name) ?? [];
         } else if (typeof form.default == "object") {
             val = form.default;
         }

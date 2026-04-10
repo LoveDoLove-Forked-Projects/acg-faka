@@ -359,7 +359,7 @@ class App implements \App\Service\App
                 try {
                     File::copyDirectory($zipPath . '/file', BASE_PATH);
                 } catch (\Exception $e) {
-                    throw new JSONException("程序升级失败，没有写入目录权限！");
+                    throw new JSONException($e->getMessage());
                 }
 
                 //升级完成，记录版本号

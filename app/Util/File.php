@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Util;
 
+use Kernel\Exception\JSONException;
+
 /**
  * Class File
  * @package App\Util
@@ -18,22 +20,55 @@ class File
      * 拷贝目录
      * @param string $src 源目录
      * @param string $dst 目标目录
+     * @throws \Exception
      */
-    public static function copyDirectory(string $src, string $dst)
+    public static function copyDirectory(string $src, string $dst): void
     {
+        if (!is_dir($src)) {
+            throw new \Exception("源目录不存在: {$src}");
+        }
+
+        if (!is_dir($dst)) {
+            if (!mkdir($dst, 0755, true) && !is_dir($dst)) {
+                throw new \Exception("创建目标目录失败: {$dst}");
+            }
+            @chmod($dst, 0755);
+        }
+
         $dir = opendir($src);
-        @mkdir($dst, 0777, true);
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    self::copyDirectory($src . '/' . $file, $dst . '/' . $file);
+        if ($dir === false) {
+            throw new \Exception("无法打开源目录: {$src}");
+        }
+
+        try {
+            while (($file = readdir($dir)) !== false) {
+                if ($file === '.' || $file === '..') {
                     continue;
+                }
+
+                $srcPath = $src . DIRECTORY_SEPARATOR . $file;
+                $dstPath = $dst . DIRECTORY_SEPARATOR . $file;
+
+                if (is_dir($srcPath)) {
+                    self::copyDirectory($srcPath, $dstPath);
+                    @chmod($dstPath, 0755);
                 } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
+                    if (!is_dir(dirname($dstPath))) {
+                        if (!mkdir(dirname($dstPath), 0755, true) && !is_dir(dirname($dstPath))) {
+                            throw new \Exception("创建父目录失败: " . dirname($dstPath));
+                        }
+                    }
+
+                    if (!copy($srcPath, $dstPath)) {
+                        throw new \Exception("复制文件失败: {$srcPath} -> {$dstPath}");
+                    }
+
+                    @chmod($dstPath, 0644);
                 }
             }
+        } finally {
+            closedir($dir);
         }
-        closedir($dir);
     }
 
     /**

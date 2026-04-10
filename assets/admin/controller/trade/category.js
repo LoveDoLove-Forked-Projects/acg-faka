@@ -16,8 +16,9 @@
                             title: "父级分类",
                             name: "pid",
                             type: "treeSelect",
-                            dict: "category->owner=0,id,name",
-                            placeholder: "父级分类，可不选"
+                            dict: "category->owner=0,id,name,pid&tree=true",
+                            placeholder: "父级分类，可不选",
+                            parent: false
                         },
                         {
                             title: "图标",
@@ -125,7 +126,7 @@
         {
             field: 'name', title: '分类名称'
         }
-        ,  {field: 'sort', title: '排序(越小越前)', sort: true, type: "input", reload: true}
+        , {field: 'sort', title: '排序(越小越前)', sort: true, type: "input", reload: true}
         , {
             field: 'share_url', title: '推广链接', type: "button", buttons: [
                 {

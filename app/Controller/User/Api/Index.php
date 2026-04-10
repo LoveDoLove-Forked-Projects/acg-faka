@@ -19,6 +19,7 @@ use App\Service\Query;
 use App\Service\Shared;
 use App\Service\Shop;
 use App\Util\Client;
+use App\Util\Tree;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Kernel\Annotation\Inject;
@@ -48,7 +49,7 @@ class Index extends User
      */
     public function data(): array
     {
-        $category = $this->shop->getCategory($this->getUserGroup());
+        $category = Tree::generate($this->shop->getCategory($this->getUserGroup()));
         hook(Hook::USER_API_INDEX_CATEGORY_LIST, $category);
         return $this->json(200, "success", $category);
     }
@@ -144,6 +145,7 @@ class Index extends User
             $total = $commodity->total();
             $data = $commodity->toArray()['data'];
         }
+
 
         $user = $this->getUser();
         $userGroup = $this->getUserGroup();
@@ -331,7 +333,11 @@ class Index extends User
     function stock(): array
     {
         $commodity = Commodity::with(['shared'])->find((int)$this->request->post("item_id"));
-        $stock = $this->shop->getItemStock($commodity, (string)$this->request->post("race"), (array)$this->request->post("sku"));
+
+        $_race = (string)$this->request->post("race");
+        $_skus = (array)$this->request->post("sku") ?: [];
+
+        $stock = $this->shop->getItemStock($commodity, $_race, $_skus);
 
         $array = ["stock" => $stock];
         $array['stock_state'] = $this->shop->getStockState($stock);
@@ -340,6 +346,7 @@ class Index extends User
         }
         return $this->json(data: $array);
     }
+
 
     /**
      * @return array

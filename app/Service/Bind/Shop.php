@@ -109,7 +109,6 @@ class Shop implements \App\Service\Shop
 
         $array = $category->toArray();
         $array = array_values($array);
-        $array = Tree::generate($array);
 
         $commodityRecommend = Config::get("commodity_recommend");
         if ($commodityRecommend == 1 && $master) {
