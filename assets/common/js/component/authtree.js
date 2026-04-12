@@ -147,12 +147,12 @@ layui.define(['jquery', 'form'], function (exports) {
             if (openchecked) {
                 obj.showChecked(dst);
             }
-            form.render();
+            obj._renderForm(dst);
             // 变动则存一下临时状态
             obj._saveNodeStatus(dst);
 
             // 开启自动宽度优化
-            obj.autoWidthAll();
+            obj.autoWidth(dst);
             // 备注：如果使用form.on('checkbox()')，外部就无法使用form.on()监听同样的元素了（LAYUI不支持重复监听了）。
             // form.on('checkbox('+layfilter+')', function(data){
             // 	/*属下所有权限状态跟随，如果选中，往上走全部选中*/
@@ -191,17 +191,19 @@ layui.define(['jquery', 'form'], function (exports) {
                             obj._autoclose($(that).parent());
                         }
                     }
-                    form.render('checkbox');
-                    form.render('radio');
+                    obj._renderForm(dst);
                     // 变动则存一下临时状态
-                    obj._saveNodeStatus(dst);
+                    var status = obj._saveNodeStatus(dst);
                     // 触发 change 事件
                     obj._triggerEvent(dst, 'change', {
                         othis: $(that),
                         oinput: elem,
                         value: elem.val(),
+                        checked: status.checked,
+                        notChecked: status.notChecked,
+                        lastChecked: status.lastChecked,
+                        lastNotChecked: status.lastNotChecked,
                     });
-                    obj.autoWidthAll();
                 }, dbltimeout);
                 return false;
             });
@@ -526,6 +528,21 @@ layui.define(['jquery', 'form'], function (exports) {
         getRenderedInfo: function (dst) {
             return this.renderedTrees[dst];
         },
+        _getRenderType: function (dst) {
+            var tree = this.getRenderedInfo(dst);
+            return tree && tree.opt && tree.opt.checkType === 'radio' ? 'radio' : 'checkbox';
+        },
+        _renderForm: function (dst) {
+            var renderType = this._getRenderType(dst);
+            var formFilter = $(dst).closest('form[lay-filter]').attr('lay-filter');
+
+            if (formFilter) {
+                form.render(renderType, formFilter);
+                return;
+            }
+
+            form.render(renderType);
+        },
         // 动态获取最大深度
         getMaxDept: function (dst) {
             var next = $(dst);
@@ -545,24 +562,30 @@ layui.define(['jquery', 'form'], function (exports) {
             var origin = $(dst);
 
             origin.find('.authtree-checkitem:not(:disabled):not(:checked)').prop('checked', true);
-            form.render('checkbox');
-            form.render('radio');
-            obj.autoWidthAll();
+            obj._renderForm(dst);
             // 变动则存一下临时状态
-            obj._saveNodeStatus(dst);
-            obj._triggerEvent(dst, 'change');
+            var status = obj._saveNodeStatus(dst);
+            obj._triggerEvent(dst, 'change', {
+                checked: status.checked,
+                notChecked: status.notChecked,
+                lastChecked: status.lastChecked,
+                lastNotChecked: status.lastNotChecked,
+            });
             obj._triggerEvent(dst, 'checkAll');
         },
         // 全不选
         uncheckAll: function (dst) {
             var origin = $(dst);
             origin.find('.authtree-checkitem:not(:disabled):checked').prop('checked', false);
-            form.render('checkbox');
-            form.render('radio');
-            obj.autoWidthAll();
+            obj._renderForm(dst);
             // 变动则存一下临时状态
-            obj._saveNodeStatus(dst);
-            obj._triggerEvent(dst, 'change');
+            var status = obj._saveNodeStatus(dst);
+            obj._triggerEvent(dst, 'change', {
+                checked: status.checked,
+                notChecked: status.notChecked,
+                lastChecked: status.lastChecked,
+                lastNotChecked: status.lastNotChecked,
+            });
             obj._triggerEvent(dst, 'uncheckAll');
         },
         // 显示整个树
@@ -608,15 +631,51 @@ layui.define(['jquery', 'form'], function (exports) {
         },
         // 临时保存所有节点信息状态
         _saveNodeStatus: function (dst) {
-            var currentChecked = this.getChecked(dst);
-            var currentNotChecked = this.getNotChecked(dst);
+            var currentChecked = [];
+            var currentNotChecked = [];
+            var lastChecked = [];
+            var lastNotChecked = [];
+            var previousChecked = this.checkedNode[dst] || [];
+            var previousNotChecked = this.notCheckedNode[dst] || [];
+            var previousCheckedMap = {};
+            var previousNotCheckedMap = {};
+
+            layui.each(previousChecked, function (index, item) {
+                previousCheckedMap[item] = true;
+            });
+
+            layui.each(previousNotChecked, function (index, item) {
+                previousNotCheckedMap[item] = true;
+            });
+
+            $(dst).find('.authtree-checkitem').each(function (index, item) {
+                if (item.checked) {
+                    currentChecked.push(item.value);
+                    if (previousNotCheckedMap[item.value]) {
+                        lastChecked.push(item.value);
+                    }
+                    return;
+                }
+
+                currentNotChecked.push(item.value);
+                if (previousCheckedMap[item.value]) {
+                    lastNotChecked.push(item.value);
+                }
+            });
+
             // 保存新信息前，最新选择的信息
-            this.lastCheckedNode[dst] = this._getLastChecked(dst, currentChecked, currentNotChecked);
-            this.lastNotCheckedNode[dst] = this._getLastNotChecked(dst, currentChecked, currentNotChecked);
+            this.lastCheckedNode[dst] = lastChecked;
+            this.lastNotCheckedNode[dst] = lastNotChecked;
             this.checkedNode[dst] = currentChecked;
             this.notCheckedNode[dst] = currentNotChecked;
 
             // console.log('保存节点信息', this.checkedNode[dst], this.notCheckedNode[dst], this.lastCheckedNode[dst], this.lastNotCheckedNode[dst]);
+            return {
+                checked: currentChecked,
+                notChecked: currentNotChecked,
+                lastChecked: lastChecked,
+                lastNotChecked: lastNotChecked
+            };
         },
         // 判断某一层是否显示
         _shownDept: function (dst, dept) {

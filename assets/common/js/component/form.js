@@ -1203,7 +1203,9 @@ class Form {
     treeCheckboxRegister(form) {
         let _this = this;
         _Dict.advanced(form.dict, res => {
-            layui.authtree.render('.' + _this.unique + ' .component-' + form.name + ' .treeCheckbox', res, {
+            const selector = '.' + _this.unique + ' .component-' + form.name + ' .treeCheckbox';
+
+            layui.authtree.render(selector, res, {
                 inputname: form.name + '[]'
                 , layfilter: _this.unique + form.name
                 , childKey: 'children'
@@ -1215,9 +1217,9 @@ class Form {
                 , checkedKey: form.default ?? []
             });
             layui.authtree.on('change(' + _this.unique + form.name + ')', function (data) {
-                let checked = layui.authtree.getChecked('.' + _this.unique + ' .component-' + form.name + ' .treeCheckbox');
+                let checked = data && Array.isArray(data.checked) ? data.checked : layui.authtree.getChecked(selector);
                 _this.setData(form.name, checked);
-                form.change && form.change(_this, checked);
+                form.change && form.change(_this, checked, data);
             });
 
             form.complete && form.complete(_this, form.default);
@@ -1436,4 +1438,3 @@ class Form {
         }
     }
 }
-
