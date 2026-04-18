@@ -8,6 +8,7 @@ use App\Interceptor\ManageSession;
 use App\Util\Client;
 use App\Util\Theme;
 use Kernel\Annotation\Interceptor;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\RuntimeException;
 use Kernel\Exception\ViewException;
 
@@ -31,7 +32,9 @@ class Config extends Manage
     }
 
     /**
+     * @return string
      * @throws ViewException
+     * @throws JSONException
      */
     public function index(): string
     {
@@ -53,9 +56,28 @@ class Config extends Manage
             $modes[$i] = $modes[$i] . " - " . ($ip ?: "此模式不适用");
         }
 
+        $themes = Theme::getThemes();
+        $cacheFile = BASE_PATH . "/runtime/plugin/store.cache";
+
+        if (file_exists($cacheFile)) {
+            $appStore = (array)json_decode((string)file_get_contents($cacheFile), true) ?: [];
+            foreach ($themes as &$theme) {
+                $key = $theme['info']['KEY'];
+
+                if (isset($appStore[$key])) {
+                    $plugin = $appStore[$key];
+                    if ($theme['info']['VERSION'] !== $plugin['version']) {
+                        $theme['have_update'] = true;
+                        $theme['update_content'] = $plugin['update_content'];
+                        $theme['update_version'] = $plugin['version'];
+                    }
+                }
+            }
+        }
+
         return $this->render("网站设置", "Config/Setting.html", [
             "toolbar" => $this->TOOLBAR,
-            "themes" => Theme::getThemes(),
+            "themes" => $themes,
             "ip_get_mode" => $modes,
             "ip_mode" => Client::getClientMode()
         ]);

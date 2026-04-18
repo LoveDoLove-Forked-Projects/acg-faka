@@ -110,17 +110,19 @@
                                     <select name="user_theme" class="form-select form-select-solid form-select-lg"
                                             data-control="select2" data-hide-search="true">
                                         #{foreach $themes as $theme}
-                                        <option value="#{$theme.info.KEY}" #{if $theme.info.KEY== $config.user_theme}
-                                                selected #{/if}>#{$theme.info.NAME} (v#{$theme.info.VERSION})
-                                        </option>
+                                            <option value="#{$theme.info.KEY}" #{if $theme.info.KEY== $config.user_theme} selected #{/if}>
+                                                #{$theme.info.NAME} (v#{$theme.info.VERSION})
+                                                #{if $theme.have_update === true}
+                                                    -> 有更新(v#{$theme.update_version}) ‹ 请前往应用商店更新 ›
+                                                #{/if}
+                                            </option>
                                         #{/foreach}
                                     </select>
                                     <!--end::Input-->
                                 </div>
                                 <div class="col-lg-2 fv-row">
                                     <!--begin::Input-->
-                                    <button type="button" class="btn btn-light theme-setting"><i
-                                                class="fa-duotone fa-regular fa-folder-gear"></i> 模板设置
+                                    <button type="button" class="btn btn-light theme-setting"><i class="fa-duotone fa-regular fa-folder-gear"></i> 模板设置
                                     </button>
                                     <!--end::Input-->
                                 </div>
@@ -141,9 +143,12 @@
                                         <option value="0" #{if "0" == $config.user_mobile_theme}selected #{/if}>跟随PC模板
                                         </option>
                                         #{foreach $themes as $theme}
-                                        <option value="#{$theme.info.KEY}" #{if $theme.info.KEY== $config.user_mobile_theme}
-                                                selected #{/if}>#{$theme.info.NAME} (v#{$theme.info.VERSION})
-                                        </option>
+                                            <option value="#{$theme.info.KEY}" #{if $theme.info.KEY== $config.user_mobile_theme}
+                                            selected #{/if}>#{$theme.info.NAME} (v#{$theme.info.VERSION})
+                                                #{if $theme.have_update === true}
+                                                    -> 有更新(v#{$theme.update_version}) ‹ 请前往应用商店更新 ›
+                                                #{/if}
+                                            </option>
                                         #{/foreach}
                                     </select>
                                     <!--end::Input-->
@@ -170,7 +175,7 @@
                                     <select name="ip_get_mode" class="form-select form-select-solid form-select-lg"
                                             data-control="select2" data-hide-search="true">
                                         #{foreach $ip_get_mode as $index => $mode}
-                                        <option value="#{$index}" #{if $index == $ip_mode} selected #{/if}>#{$mode}</option>
+                                            <option value="#{$index}" #{if $index == $ip_mode} selected #{/if}>#{$mode}</option>
                                         #{/foreach}
                                     </select>
                                     <!--end::Input-->

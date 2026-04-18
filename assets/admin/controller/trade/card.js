@@ -137,20 +137,21 @@ VIP-2025-0821-XYZ
            
           <p class="text-muted mb-3">
             一行一个，必须使用 <code>║</code> 分隔，结构为：  
-            <span class="text-dark fw-bold">卡密本体 ║ 预告信息 ║ 自选加价金额(可选)</span>
+            <span class="text-dark fw-bold">卡密本体 ║ 预告信息 ║ 自选加价金额(可选) ║ 自选加价成本(可选)</span>
           </p>
 
           <ul class="list-unstyled small mb-3">
             <li class="mb-1"><span class="a-badge a-badge-dark me-1">卡密本体</span> 买家付款后实际获得的完整内容</li>
             <li class="mb-1"><span class="a-badge a-badge-success me-1">预告信息</span> 买家下单时可见，用于自选</li>
-            <li><span class="a-badge a-badge-warning text-dark me-1">自选加价金额</span> 选填，不写默认为 0</li>
+            <li class="mb-1"><span class="a-badge a-badge-warning text-dark me-1">自选加价金额</span> 选填，不写默认为 0</li>
+            <li><span class="a-badge a-badge-primary text-dark me-1">自选加价成本</span> 选填，不写默认为 0</li>
           </ul>
 
           <div class="translucent border rounded p-3">
             <div class="fw-bold mb-2 small text-uppercase text-secondary">示例</div>
 <pre class="mb-0" style="white-space: pre-wrap; word-break: break-all;">
-账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5
-ACC_US_12M_9F2K-7QPA-88XZ║地区:美区·时长:12个月║20
+账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5║2.5
+ACC_US_12M_9F2K-7QPA-88XZ║地区:美区·时长:12个月║20║8
 ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
 </pre>
           </div>
@@ -213,6 +214,13 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                             placeholder: "非自选类型卡密请留空",
                         },
                         {
+                            title: "自选成本",
+                            name: "cost",
+                            type: "number",
+                            placeholder: "非自选类型卡密请留空",
+                            tips: "用来统计利润，如果你自选的卡密有成本，则需要填写"
+                        },
+                        {
                             title: "备注信息",
                             name: "note",
                             type: "input",
@@ -244,6 +252,9 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
         },
         {
             field: 'draft_premium', title: '预选加价', formatter: _ => format.money(_)
+        },
+        {
+            field: 'cost', title: '预选成本'
         }
         , {
             field: 'commodity', title: '商品', formatter: format.item

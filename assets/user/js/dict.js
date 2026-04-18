@@ -17,8 +17,8 @@ const _Dict = new class _Dict extends _DictUtil {
             "_common_device": [
                 {id: 0, "name": `<i class="fa-duotone fa-regular fa-window"></i> PC`},
                 {id: 1, "name": `<i class="fa-duotone fa-regular fa-robot"></i> 安卓`},
-                {id: 1, "name": `<i class="fa-duotone fa-regular fa-apple-whole"></i> IOS`},
-                {id: 1, "name": `<i class="fa-duotone fa-regular fa-tablet"></i> iPad`},
+                {id: 2, "name": `<i class="fa-duotone fa-regular fa-apple-whole"></i> IOS`},
+                {id: 3, "name": `<i class="fa-duotone fa-regular fa-tablet"></i> iPad`},
             ],
             "_contact_type": [
                 {id: 0, "name": format.color("任意", "#de27ba")},

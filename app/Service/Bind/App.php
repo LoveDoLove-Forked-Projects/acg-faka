@@ -248,6 +248,13 @@ class App implements \App\Service\App
                 File::delDirectory($viewDir);
             }
         }
+
+        $files = [BASE_PATH . '/runtime/plugin/store.cache', BASE_PATH . '/runtime/plugin/update.cache'];
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
     }
 
     /**

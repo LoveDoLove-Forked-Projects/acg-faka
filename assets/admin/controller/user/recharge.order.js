@@ -70,4 +70,61 @@
             table.refresh();
         });
     });
+
+    $('.btn-app-export').click(function () {
+
+        component.popup({
+            tab: [
+                {
+                    name: util.icon("fa-duotone fa-regular fa-file-export") + " 导出充值订单",
+                    form: [
+                        {
+                            name: "custom",
+                            type: "custom",
+                            complete: (obj, dom) => {
+                                dom.html('<div style="margin-bottom: 25px;color: #27bd27;font-weight: bolder;">导出程序将根据您通过查询功能筛选出的充值订单进行导出。如果您填写了导出数量，将导出指定数量的充值订单；如果您未填写数量，则将导出您筛选的全部充值订单。</div>');
+                            }
+                        },
+                        {
+                            title: "导出数量",
+                            name: "export_num",
+                            type: "input",
+                            placeholder: "导出数量，填写0或不填表示全部导出。"
+                        },
+                        {
+                            title: "导出后执行",
+                            name: "export_status",
+                            type: "radio",
+                            dict: [
+                                {id: 0, name: "不执行任何操作"},
+                                {id: 1, name: "删除导出的充值订单（高危/物理删除）"},
+                            ]
+                        }
+                    ]
+                }
+            ],
+            height: "auto",
+            width: "580px",
+            assign: {},
+            confirmText: "开始导出",
+            maxmin: false,
+            autoPosition: true,
+            submit: (data, index) => {
+                let searchData = table.getSearchData();
+                let state = table.getState();
+                let query = util.objectToQueryString(Object.assign(searchData, data));
+
+                layer.close(index);
+
+                let url = "/admin/api/rechargeOrder/export?" + query + "&equal-" + state.field + "=" + state.value;
+                if (data.export_status == 1) {
+                    message.dangerPrompt("您正在执行高风险的充值订单导出操作，需要注意此操作是物理删除，绝对上的无法恢复。", "我确认导出并删除充值订单", () => {
+                        window.open(url);
+                    });
+                } else {
+                    window.open(url);
+                }
+            },
+        });
+    });
 }();

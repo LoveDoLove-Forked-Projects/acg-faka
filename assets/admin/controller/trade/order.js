@@ -37,7 +37,7 @@
             field: 'trade_no', title: '订单号'
         }
         , {
-            field: 'owner', title: '会员', formatter: format.user
+            field: 'owner', title: '客户', formatter: format.user
         }
         , {
             field: 'commodity', title: '商品', formatter: format.item
@@ -77,9 +77,11 @@
         , {
             field: 'delivery_status', title: '发货状态', dict: "_order_delivery_status"
         }
-
         , {
             field: 'cost', title: '手续费', formatter: _ => format.money(_, "blue")
+        }
+        , {
+            field: 'rent', title: '消耗成本'
         }
         , {
             field: 'user', title: '商家/分站', formatter: (_, __) => {
@@ -90,9 +92,8 @@
                 return format.owner(__.substation_user);
             }
         }
-
         , {
-            field: 'rebate', title: '佣金', formatter: _ => {
+            field: 'rebate', title: '分站佣金', formatter: _ => {
                 if (_ > 0) {
                     return format.badge(_, "a-badge-primary");
                 }
@@ -213,6 +214,7 @@
         {title: "商品ID", name: "equal-commodity_id", type: "input"},
         {title: "卡密信息(模糊)", name: "search-secret", type: "input"},
         {title: "联系方式", name: "equal-contact", type: "input"},
+        {title: "支付状态", name: "equal-status", type: "select", dict: "_order_status"},
         {title: "发货状态", name: "equal-delivery_status", type: "select", dict: "_order_delivery_status"},
         {title: "支付方式", name: "equal-pay_id", type: "select", dict: "pay,id,name"},
         {
@@ -243,6 +245,64 @@
                 message.success(res.msg);
                 table.refresh();
             }
+        });
+    });
+
+
+    $('.btn-app-export').click(function () {
+
+        component.popup({
+            tab: [
+                {
+                    name: util.icon("fa-duotone fa-regular fa-file-export") + " 导出订单",
+                    form: [
+                        {
+                            name: "custom",
+                            type: "custom",
+                            complete: (obj, dom) => {
+                                dom.html('<div style="margin-bottom: 25px;color: #27bd27;font-weight: bolder;">导出程序将根据您通过查询功能筛选出的订单进行导出。如果您填写了导出数量，将导出指定数量的订单；如果您未填写数量，则将导出您筛选的全部订单。</div>');
+                            }
+                        },
+                        {
+                            title: "导出数量",
+                            name: "export_num",
+                            type: "input",
+                            placeholder: "导出数量，填写0或不填表示全部导出。"
+                        },
+                        {
+                            title: "导出后执行",
+                            name: "export_status",
+                            type: "radio",
+                            dict: [
+                                {id: 0, name: "不执行任何操作"},
+                                {id: 1, name: "删除导出的订单（高危/物理删除）"},
+                            ]
+                        }
+                    ]
+                }
+            ],
+            height: "auto",
+            width: "580px",
+            assign: {},
+            confirmText: "开始导出",
+            maxmin: false,
+            autoPosition: true,
+            submit: (data, index) => {
+                let searchData = table.getSearchData();
+                let state = table.getState();
+                let query = util.objectToQueryString(Object.assign(searchData, data));
+
+                layer.close(index);
+
+                let url = "/admin/api/order/export?" + query + "&equal-" + state.field + "=" + state.value;
+                if (data.export_status == 1) {
+                    message.dangerPrompt("您正在执行高风险的订单导出操作，需要注意此操作是物理删除，绝对上的无法恢复。", "我确认导出并删除订单", () => {
+                        window.open(url);
+                    });
+                } else {
+                    window.open(url);
+                }
+            },
         });
     });
 }();

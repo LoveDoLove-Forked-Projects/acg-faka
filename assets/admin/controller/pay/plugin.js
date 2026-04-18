@@ -37,15 +37,22 @@
     }
 
     const modal = (title, assign = {}) => {
-        component.popup({
-            submit: '/admin/api/pay/setPluginConfig',
-            tab: [
+        let submit = [];
+        if (typeof assign.submit === "object") {
+            submit = [
                 {
                     name: title,
                     form: assign.submit
-                },
-            ],
-            assign: assign,
+                }
+            ];
+        } else if (typeof assign.submit === "string" && assign.submit.trim() != "") {
+            submit = eval(assign.submit);
+        }
+
+        component.popup({
+            submit: `/admin/api/pay/setPluginConfig?id=${assign.id}`,
+            tab: submit,
+            assign: assign?.config ?? [],
             autoPosition: true,
             height: "auto",
             width: "680px",
@@ -63,7 +70,7 @@
             }
         }
         , {
-            field: 'operation', title: '操作', type: 'button', buttons: [
+            field: 'operation', class: "nowrap", title: '操作', type: 'button', buttons: [
                 {
                     icon: 'fa-duotone fa-regular fa-gear',
                     class: 'text-primary',
@@ -124,7 +131,10 @@
             ]
         }
         , {
-            field: 'version', title: '<span id="updateNum">版本号</span>', formatter: function (val, item) {
+            field: 'version',
+            class: "nowrap",
+            title: '<span id="updateNum">版本号</span>',
+            formatter: function (val, item) {
                 return '<span class="badge badge-light">' + item?.info?.version + '</span>' + pluginUpdate.renderButton(item.id, item?.info?.version);
             }
             ,
@@ -165,8 +175,23 @@
             field: 'info.description',
             title: '简介',
             class: "break-spaces"
-        }
-        , {
+        },
+        {
+            field: 'config.top',
+            title: 'TOP',
+            class: "nowrap",
+            type: "switch",
+            text: "置顶|无",
+            reload: true,
+            change: (state, row) => {
+                util.post(`/admin/api/pay/setPluginConfig?id=${row.id}`, {top: state}, done => {
+                    table.$table.bootstrapTable('refresh', {
+                        silent: true, pageNumber: 1
+                    });
+                });
+            }
+        },
+        {
             field: 'author', title: '作者', formatter: function (val, item) {
                 if (item?.info?.author == "#" || !item?.info?.author) {
                     return '-';

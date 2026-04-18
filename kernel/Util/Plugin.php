@@ -37,6 +37,7 @@ class Plugin
 
         $infoPath = $path . '/Config/Info.php';
         $submitPath = $path . '/Config/Submit.php';
+        $submitJsPath = $path . '/Config/Submit.js';
         $configPath = $path . '/Config/Config.php';
         if (!file_exists($infoPath) || !file_exists($submitPath) || !file_exists($configPath)) {
             return null;
@@ -47,8 +48,12 @@ class Plugin
         }
 
         $info = (array)require($infoPath);
-        $submit = (array)require($submitPath);
-        $config = (array)require($configPath);
+        $submit = file_exists($submitPath) ? require($submitPath) : [];
+        $config = file_exists($configPath) ? require($configPath) : [];
+
+        if (file_exists($submitJsPath)) {
+            $submit = file_get_contents($submitJsPath);
+        }
 
         //submit
         if (is_array($submit)) {

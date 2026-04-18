@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $status
  * @property string $race
  * @property string $draft_premium
+ * @property string $cost
  */
 class Card extends Model
 {

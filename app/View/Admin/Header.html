@@ -212,7 +212,7 @@
                             <a class="menu-link  #{if in_array($title, ["网站设置" , "短信设置" , "邮箱设置" , "其他设置"])}active#{/if}"
                                href="/admin/config/index">
                                 <span class="menu-icon"><i class="fa-duotone fa-regular fa-gear"></i></span>
-                                <span class="menu-title">网站设置</span>
+                                <span class="menu-title">网站设置<span class="update-badge theme-update"></span></span>
                             </a>
                         </div>
 
@@ -230,7 +230,7 @@
                             <a class="menu-link  #{if $title == '通用插件'}active#{/if}" href="/admin/plugin/index">
                                 <span class="menu-icon"><i
                                             class="fa-duotone fa-regular fa-puzzle-piece-simple"></i></span>
-                                <span class="menu-title">通用插件</span>
+                                <span class="menu-title">通用插件<span class="update-badge general-update"></span></span>
                             </a>
                         </div>
 
@@ -238,7 +238,7 @@
                              class="menu-item menu-accordion #{if in_array($title,['支付插件','支付设置'])} here show #{/if}">
 									<span class="menu-link">
 										<span class="menu-icon"><i class="fa-duotone fa-regular fa-message-dollar"></i></span>
-										<span class="menu-title">支付管理</span>
+										<span class="menu-title">支付管理<span class="update-badge payPlugin-update"></span></span>
 										<span class="menu-arrow"></span>
 									</span>
                             <div class="menu-sub menu-sub-accordion menu-active-bg">
@@ -248,7 +248,7 @@
 												<span class="menu-bullet">
 													<span class="bullet bullet-dot"></span>
 												</span>
-                                        <span class="menu-title">支付插件</span>
+                                        <span class="menu-title">支付插件<span class="update-badge payPlugin-update"></span></span>
                                     </a>
                                 </div>
                                 <div class="menu-item">

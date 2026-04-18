@@ -29,11 +29,17 @@ class Plugin extends Manage
         $status = $_POST['equal-status'];
 
         foreach ($plugins as $key => $plugin) {
+
             $plugins[$key]["id"] = $plugin[\App\Consts\Plugin::PLUGIN_NAME];
             if (!array_key_exists($plugins[$key]["id"], $appStore)) {
                 $plugins[$key]['icon'] = "/favicon.ico";
             } else {
                 $plugins[$key]['icon'] = \App\Service\App::APP_URL . $appStore[$plugins[$key]["id"]]['icon'];
+
+                if ($plugin['VERSION'] !== $appStore[$plugin['PLUGIN_NAME']]["version"]) {
+                    $plugins[$key]['HAVE_UPDATE'] = true;
+                }
+
             }
             //判断文档是否存在
             if (file_exists($path . $plugins[$key]["id"] . "/Wiki/Index.html")) {
@@ -47,6 +53,7 @@ class Plugin extends Manage
                 }
             }
 
+
             if ($keywords) {
                 if (!str_contains($plugin[\App\Consts\Plugin::NAME], $keywords) && !str_contains($plugin[\App\Consts\Plugin::DESCRIPTION], $keywords)) {
                     unset($plugins[$key]);
@@ -55,6 +62,17 @@ class Plugin extends Manage
         }
 
         $plugins = array_values($plugins);
+
+        usort($plugins, function ($a, $b) {
+            $aTop = ($a['PLUGIN_CONFIG']['top'] ?? 0) == 1 ? 1 : 0;
+            $bTop = ($b['PLUGIN_CONFIG']['top'] ?? 0) == 1 ? 1 : 0;
+            return $bTop <=> $aTop;
+        });
+
+        usort($plugins, function ($a, $b) {
+            return ($b['HAVE_UPDATE'] ?? false) <=> ($a['HAVE_UPDATE'] ?? false);
+        });
+
         return $this->json(200, 'success', ["list" => $plugins]);
     }
 
@@ -69,14 +87,18 @@ class Plugin extends Manage
     {
         $map = $request->post(flags: Filter::NORMAL);
 
-        if (!$map['id'] === "" || !isset($map['id'])) {
+        $id = $request->get("id") ?: $request->post("id");
+
+        if (!$id) {
             throw new JSONException("插件不存在");
         }
-        $id = $map['id'];
-        unset($map['id']);
 
-        //   $map = array_merge($map, (array));
+        if (isset($map['id'])) {
+            unset($map['id']);
+        }
+
         $plugin = \Kernel\Util\Plugin::getPlugin($id, false);
+
         if (!$plugin) {
             throw new JSONException("插件不存在");
         }
@@ -107,18 +129,22 @@ class Plugin extends Manage
     /**
      * @return array
      * @throws JSONException
-     * @throws \ReflectionException
      */
     public function setThemeConfig(): array
     {
-        $map = $_POST;
-        if (!$map['id'] === "" || !isset($map['id'])) {
+        $map = $this->request->post(flags: Filter::NORMAL);
+        $id = $this->request->get("id") ?: $this->request->post("id");
+
+        if (!$id) {
             throw new JSONException("模板不存在");
         }
-        $id = $map['id'];
-        unset($map['id']);
+
+        if (isset($map['id'])) {
+            unset($map['id']);
+        }
+
         $theme = Theme::getConfig($id);
-        if (!$theme) {
+        if (empty($theme)) {
             throw new JSONException("模板不存在");
         }
         $config = $theme["setting"];

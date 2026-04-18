@@ -403,7 +403,7 @@ class Shop implements \App\Service\Shop
             throw new JSONException("此宝贝已被他人抢走");
         }
 
-        return ["draft_premium" => $card->draft_premium];
+        return ["draft_premium" => $card->draft_premium, "cost" => $card->cost];
     }
 
 

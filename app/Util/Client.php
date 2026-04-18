@@ -183,4 +183,21 @@ class Client
     {
         return preg_match('/MicroMessenger/i', $_SERVER['HTTP_USER_AGENT']) === 1;
     }
+
+    /**
+     * @param string|null $userAgent
+     * @return int
+     */
+    public static function getDeviceTypeByUa(?string $userAgent = null): int
+    {
+        $ua = strtolower($userAgent ?? $_SERVER['HTTP_USER_AGENT'] ?? '');
+        return match (true) {
+            str_contains($ua, 'ipad') => 3,
+            str_contains($ua, 'macintosh') && str_contains($ua, 'mobile') => 3,
+            str_contains($ua, 'iphone'),
+            str_contains($ua, 'ipod') => 2,
+            str_contains($ua, 'android') => 1,
+            default => 0,
+        };
+    }
 }

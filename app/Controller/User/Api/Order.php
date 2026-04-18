@@ -10,6 +10,7 @@ use App\Interceptor\Waf;
 use App\Model\Config;
 use App\Model\UserRecharge;
 use App\Util\Captcha;
+use App\Util\Client;
 use App\Util\Str;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
@@ -17,6 +18,7 @@ use Kernel\Annotation\Post;
 use Kernel\Context\Interface\Request;
 use Kernel\Exception\JSONException;
 use Kernel\Exception\RuntimeException;
+use Kernel\Util\Arr;
 use Kernel\Waf\Filter;
 
 #[Interceptor([Waf::class, UserVisitor::class])]
@@ -40,6 +42,8 @@ class Order extends User
             }
             Captcha::destroy("trade");
         }
+
+        $map['device'] = Client::getDeviceTypeByUa($request->header("User-Agent"));
 
         hook(Hook::USER_API_ORDER_TRADE_BEGIN, $map);
         $trade = $this->order->trade($this->getUser(), $this->getUserGroup(), $map);
@@ -67,6 +71,10 @@ class Order extends User
 
         if (empty($data)) {
             $data = json_decode($request->raw(), true);
+        }
+
+        if (empty($data)) {
+            $data = Arr::xmlToArray((string)file_get_contents("php://input"));
         }
 
         if (empty($data)) {

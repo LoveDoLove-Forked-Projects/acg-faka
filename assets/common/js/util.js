@@ -1,6 +1,13 @@
 const util = new class Util {
     icon(icon) {
+        if (this.isImagePath(icon)) {
+            return `<img class="image-icon" src="${icon}"  alt="icon"/>`
+        }
         return `<i class="${icon}"></i>`;
+    }
+
+    isImagePath(str) {
+        return /^\/[A-Za-z0-9_\/\-.]+\.(?:png|webp|jpg|jpeg|gif)$/i.test(str);
     }
 
     replaceDotWithHyphen(str) {

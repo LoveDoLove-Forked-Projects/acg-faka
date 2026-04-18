@@ -119,23 +119,27 @@
             themes[item.info.KEY] = item;
         });
 
-
         function modal(values = {}) {
-            if (values.submit.length == 0) {
-                layer.msg("该模板暂时没有可设置的选项");
-                return;
-            }
-
-            values.setting.id = values.info.KEY;
-
-            component.popup({
-                submit: '/admin/api/plugin/setThemeConfig',
-                tab: [
+            let submit = [];
+            if (typeof values.submit === "object") {
+                submit = [
                     {
                         name: `<i class="fa-duotone fa-regular fa-gear-code"></i> ${values.info.NAME}`,
                         form: values.submit
                     },
-                ],
+                ];
+            } else if (typeof values.submit === "string" && values.submit.trim() != "") {
+                submit = eval(values.submit) ?? [];
+            }
+
+            if (submit?.length == 0) {
+                layer.msg("该模板暂时没有可设置的选项");
+                return;
+            }
+
+            component.popup({
+                submit: `/admin/api/plugin/setThemeConfig?id=${values?.info?.KEY}`,
+                tab: submit,
                 autoPosition: true,
                 height: "auto",
                 assign: values.setting,

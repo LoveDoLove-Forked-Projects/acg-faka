@@ -337,6 +337,9 @@
 
 .layui-layer-tab .layui-layer-title span {
     padding: 0 10px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 
@@ -1798,7 +1801,6 @@ ul.list-default li {
     background: transparent !important;
     border-bottom: none !important;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 24px;
-
 }
 
 .layui-layer-setwin {
@@ -2387,30 +2389,34 @@ textarea, input {
 }
 
 
-
-:root{
+:root {
     --chahuo-ring-z: 2147483647;
-    --chahuo-ring-overlay: rgba(0,0,0,.07); /* 想更淡就改成 .05/.04 */
+    --chahuo-ring-overlay: rgba(0, 0, 0, .07); /* 想更淡就改成 .05/.04 */
     --chahuo-ring-color: #25b09b;
-    --chahuo-ring-size: 50px;   /* 直径 */
-    --chahuo-ring-border: 4px;  /* 圈线粗细 */
+    --chahuo-ring-size: 50px; /* 直径 */
+    --chahuo-ring-border: 4px; /* 圈线粗细 */
 }
 
-.chahuo-ring-overlay{
-    position: fixed; inset: 0;
-    display: none; place-items: center;
+.chahuo-ring-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
     z-index: var(--chahuo-ring-z);
     background: var(--chahuo-ring-overlay);
     backdrop-filter: blur(1px);
 }
-.chahuo-ring-overlay[mask-hidden="false"]{ display: grid; }
 
-.chahuo-ring-inline{
+.chahuo-ring-overlay[mask-hidden="false"] {
+    display: grid;
+}
+
+.chahuo-ring-inline {
     display: inline-grid;
     place-items: center;
 }
 
-.chahuo-ring{
+.chahuo-ring {
     width: var(--chahuo-ring-size);
     aspect-ratio: 1;
     display: grid;
@@ -2419,8 +2425,9 @@ textarea, input {
     border-right-color: var(--chahuo-ring-color);
     animation: chahuo-ring-spin 1s infinite linear;
 }
+
 .chahuo-ring::before,
-.chahuo-ring::after{
+.chahuo-ring::after {
     content: "";
     grid-area: 1/1;
     margin: 2px;
@@ -2428,20 +2435,64 @@ textarea, input {
     border-radius: 50%;
     animation: chahuo-ring-spin 2s infinite;
 }
-.chahuo-ring::after{
+
+.chahuo-ring::after {
     margin: 8px;
     animation-duration: 3s;
 }
 
-@keyframes chahuo-ring-spin{
-    to{ transform: rotate(1turn) }
+@keyframes chahuo-ring-spin {
+    to {
+        transform: rotate(1turn)
+    }
 }
 
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce) {
     .chahuo-ring,
     .chahuo-ring::before,
-    .chahuo-ring::after{
+    .chahuo-ring::after {
         animation: none;
     }
 }
 
+.image-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table .action-col {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    white-space: nowrap;
+}
+
+.table thead .action-col {
+    z-index: 3;
+}
+
+.table .action-col .a-badge-glass {
+    background: #fff !important;
+}
+
+
+.update-badge {
+    display: none;
+    padding: 2px 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    margin-left: 6px;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.475rem;
+    background-color: #50CD89;
+}

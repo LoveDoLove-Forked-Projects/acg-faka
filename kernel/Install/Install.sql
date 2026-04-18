@@ -71,6 +71,7 @@ CREATE TABLE `__PREFIX__card`  (
                                    `race` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品种类',
                                    `sku` json DEFAULT NULL COMMENT 'SKU',
                                    `draft_premium` decimal(10,2) unsigned DEFAULT NULL COMMENT '预选加价',
+                                   `cost` decimal(10,2) unsigned DEFAULT 0 COMMENT '预选成本',
                                    PRIMARY KEY (`id`) USING BTREE,
                                    INDEX `owner`(`owner` ASC) USING BTREE,
                                    INDEX `commodity_id`(`commodity_id` ASC) USING BTREE,

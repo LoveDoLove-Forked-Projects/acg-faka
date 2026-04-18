@@ -52,6 +52,13 @@
                             placeholder: "会员零售价",
                             required: true
                         },
+                        {
+                            title: "成本价",
+                            name: "factory_price",
+                            type: "input",
+                            tips: "用来统计利润，需要给出真实成本价，如果商品有SKU，需要在配置参数中继续配置SKU的成本",
+                            placeholder: "成本价"
+                        },
                         {title: "排序", name: "sort", type: "input", placeholder: "排序，越小越靠前"},
                         {title: "状态", name: "status", type: "switch", text: "启用"},
                     ]
@@ -638,20 +645,21 @@ VIP-2025-0821-XYZ
            
           <p class="text-muted mb-3">
             一行一个，必须使用 <code>║</code> 分隔，结构为：  
-            <span class="text-dark fw-bold">卡密本体 ║ 预告信息 ║ 自选加价金额(可选)</span>
+            <span class="text-dark fw-bold">卡密本体 ║ 预告信息 ║ 自选加价金额(可选) ║ 自选加价成本(可选)</span>
           </p>
 
           <ul class="list-unstyled small mb-3">
             <li class="mb-1"><span class="a-badge a-badge-dark me-1">卡密本体</span> 买家付款后实际获得的完整内容</li>
             <li class="mb-1"><span class="a-badge a-badge-success me-1">预告信息</span> 买家下单时可见，用于自选</li>
-            <li><span class="a-badge a-badge-warning text-dark me-1">自选加价金额</span> 选填，不写默认为 0</li>
+            <li class="mb-1"><span class="a-badge a-badge-warning text-dark me-1">自选加价金额</span> 选填，不写默认为 0</li>
+            <li><span class="a-badge a-badge-primary text-dark me-1">自选加价成本</span> 选填，不写默认为 0</li>
           </ul>
 
           <div class="translucent border rounded p-3">
             <div class="fw-bold mb-2 small text-uppercase text-secondary">示例</div>
 <pre class="mb-0" style="white-space: pre-wrap; word-break: break-all;">
-账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5
-ACC_US_12M_9F2K-7QPA-88XZ║地区:美区·时长:12个月║20
+账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5║2.5
+ACC_US_12M_9F2K-7QPA-88XZ║地区:美区·时长:12个月║20║8
 ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
 </pre>
           </div>
@@ -696,10 +704,13 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
             field: 'category.name', title: '分类'
         }
         , {
-            field: 'name', title: '商品名称', formatter: (_, __) => format.item(__)
+            field: 'cover', title: '商品图标', type: "image"
         }
         , {
-            field: 'card_count', title: '库存', formatter: function (val, item) {
+            field: 'name', title: '商品名称'
+        }
+        , {
+            field: 'card_count', title: '库存', class: "nowrap", formatter: function (val, item) {
                 if (item.delivery_way == 0) {
                     return item.card_count + ` <a class='add-card' data-id='${item.id}' style='color: green;' href='javascript:void(0);'>加卡</a>`;
                 }
@@ -740,7 +751,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
             field: 'recommend', title: '推荐', type: "switch", text: "已推荐|未推荐", reload: true, class: "nowrap"
         },
         {
-            field: 'operation', title: '操作', type: 'button', buttons: [
+            field: 'operation', class: "action-col", title: '操作', type: 'button', buttons: [
                 {
                     icon: 'fa-duotone fa-regular fa-pen-to-square',
                     class: "text-primary",

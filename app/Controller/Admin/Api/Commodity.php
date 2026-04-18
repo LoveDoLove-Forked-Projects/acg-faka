@@ -108,9 +108,6 @@ class Commodity extends Manage
      * @param Request $request
      * @return array
      * @throws JSONException
-     * @throws NotFoundException
-     * @throws RuntimeException
-     * @throws \ReflectionException
      */
     public function save(Request $request): array
     {
@@ -162,6 +159,7 @@ class Commodity extends Manage
 
         $save = new Save(\App\Model\Commodity::class);
         $save->setMap($map);
+        $save->addForceMap("config", $map['config'] ?? "");
         $save->enableCreateTime();
         $save = $this->query->save($save);
         if (!$save) {
@@ -176,8 +174,6 @@ class Commodity extends Manage
     /**
      * @return array
      * @throws JSONException
-     * @throws NotFoundException
-     * @throws \ReflectionException
      */
     public function del(): array
     {

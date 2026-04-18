@@ -19,7 +19,6 @@ use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Context\Interface\Request;
 use Kernel\Exception\JSONException;
-use Kernel\Exception\NotFoundException;
 use Kernel\Waf\Filter;
 
 #[Interceptor(ManageSession::class, Interceptor::TYPE_API)]
@@ -132,7 +131,12 @@ class Card extends Manage
 
                 //独立加价
                 if (isset($list[2])) {
-                    $cardObj->draft_premium = (float)$list[2];
+                    $cardObj->draft_premium = (float)trim($list[2]);
+                }
+
+                //预选成本
+                if (isset($list[3])) {
+                    $cardObj->cost = (float)trim($list[3]);
                 }
             }
 

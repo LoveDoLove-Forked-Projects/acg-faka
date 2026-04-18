@@ -5,6 +5,7 @@ namespace App\Model;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property float $amount
@@ -37,14 +38,14 @@ class UserRecharge extends Model
     protected $casts = ['amount' => 'float', 'id' => 'integer', 'pay_id' => 'integer', 'status' => 'integer', 'user_id' => 'integer'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|null
+     * @return HasOne|null
      */
-    public function user(): ?\Illuminate\Database\Eloquent\Relations\HasOne
+    public function user(): ?HasOne
     {
         return $this->hasOne(User::class, "id", "user_id");
     }
 
-    public function pay(): ?\Illuminate\Database\Eloquent\Relations\HasOne
+    public function pay(): ?HasOne
     {
         return $this->hasOne(Pay::class, "id", "pay_id");
     }

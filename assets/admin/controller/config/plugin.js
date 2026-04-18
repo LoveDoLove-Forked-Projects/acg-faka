@@ -37,15 +37,23 @@
     }
 
     const modal = (title, assign = {}) => {
-        component.popup({
-            submit: '/admin/api/plugin/setConfig',
-            tab: [
+        let submit = [];
+        if (typeof assign.PLUGIN_SUBMIT === "object") {
+            submit = [
                 {
                     name: title,
                     form: assign.PLUGIN_SUBMIT
-                },
-            ],
-            assign: assign,
+                }
+            ];
+        } else if (typeof assign.PLUGIN_SUBMIT === "string" && assign.PLUGIN_SUBMIT.trim() != "") {
+            submit = eval(assign.PLUGIN_SUBMIT);
+        }
+
+
+        component.popup({
+            submit: '/admin/api/plugin/setConfig?id=' + assign.id,
+            tab: submit,
+            assign: assign?.PLUGIN_CONFIG ?? [],
             autoPosition: true,
             height: "auto",
             width: "680px",
@@ -72,7 +80,7 @@
             }
         }
         , {
-            field: 'operation', title: '控制', type: 'button', buttons: [
+            field: 'operation', title: '控制', class: "nowrap", type: 'button', buttons: [
                 {
                     icon: 'fa-duotone fa-regular fa-circle-stop ',
                     class: "text-danger",
@@ -90,7 +98,7 @@
                     icon: 'fa-duotone fa-regular fa-circle-play',
                     class: 'text-success',
                     title: '启用',
-                    show: item => item.PLUGIN_CONFIG && (item.PLUGIN_CONFIG?.STATUS == 0 || !item.PLUGIN_CONFIG?.STATUS) ,
+                    show: item => item.PLUGIN_CONFIG && (item.PLUGIN_CONFIG?.STATUS == 0 || !item.PLUGIN_CONFIG?.STATUS),
                     click: (event, value, row, index) => {
                         util.post("/admin/api/plugin/setConfig", {id: row.id, STATUS: 1}, res => {
                             table.refresh();
@@ -167,7 +175,10 @@
             }
         }
         , {
-            field: 'version', title: '<span id="updateNum">版本号</span>', formatter: function (val, item) {
+            field: 'version',
+            class: "nowrap",
+            title: '<span id="updateNum">版本号</span>',
+            formatter: function (val, item) {
                 return '<span class="badge badge-light">' + item.VERSION + '</span>' + pluginUpdate.renderButton(item.id, item.VERSION);
             }
             ,
@@ -202,8 +213,23 @@
             field: 'DESCRIPTION',
             title: '简介',
             class: "break-spaces"
-        }
-        , {
+        },
+        {
+            field: 'PLUGIN_CONFIG.top',
+            title: 'TOP',
+            class: "nowrap",
+            type: "switch",
+            text: "置顶|无",
+            reload: true,
+            change: (state, row) => {
+                util.post('/admin/api/plugin/setConfig?id=' + row.id, {top: state}, done => {
+                    table.$table.bootstrapTable('refresh', {
+                        silent: true, pageNumber: 1
+                    });
+                });
+            }
+        },
+        {
             field: 'author', title: '作者', formatter: function (val, item) {
                 if (item.AUTHOR == "#" || !item.AUTHOR) {
                     return '-';

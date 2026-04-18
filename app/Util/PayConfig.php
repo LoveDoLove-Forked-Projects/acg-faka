@@ -31,7 +31,13 @@ class PayConfig
      */
     public static function info(string $handle): ?array
     {
-        return require(BASE_PATH . '/app/Pay/' . $handle . '/Config/Info.php');
+        $path = BASE_PATH . '/app/Pay/' . $handle . '/Config/Info.php';
+
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        return require($path);
     }
 
 

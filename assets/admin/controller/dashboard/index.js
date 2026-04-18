@@ -44,7 +44,7 @@
                 $('.cash_status_0').text(res.data.cash_status_0);
                 $('.cash_money_status_1').text("￥" + res.data.cash_money_status_1);
                 $('.user_register_num').text(res.data.user_register_num);
-                $('.user_login_num').text(res.data.user_login_num);
+                $('.order_profit').text("￥" + res.data.profit);
                 $('.recharge_amount').text("￥" + res.data.recharge_amount);
                 $('.divide_amount').text("￥" + res.data.divide_amount);
                 $('.rebate').text("￥" + res.data.rebate);

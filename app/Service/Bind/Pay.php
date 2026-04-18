@@ -68,25 +68,32 @@ class Pay implements \App\Service\Pay
         if (file_exists($plugPath . '/Config/Info.php') && file_exists($plugPath . '/Config/Submit.php')) {
             $infoPath = $plugPath . '/Config/Info.php';
             $submitPath = $plugPath . '/Config/Submit.php';
+            $submitJsPath = $plugPath . '/Config/Submit.js';
             $configPath = $plugPath . '/Config/Config.php';
 
             Opcache::invalidate($infoPath, $submitPath, $configPath);
 
             //解析信息
             $info = require($infoPath);
-            $submit = require($submitPath);
-            $config = require($configPath);
+            $submit = file_exists($submitPath) ? require($submitPath) : [];
+            $config = file_exists($configPath) ? require($configPath) : [];
+
+            if (file_exists($submitJsPath)) {
+                $submit = file_get_contents($submitJsPath);
+            }
 
             foreach ($submit as $index => $item) {
                 if (isset($config[$item['name']])) {
                     $submit[$index]['default'] = $config[$item['name']];
                 }
             }
+
             return [
                 'id' => $name,
                 'handle' => $name,
                 'info' => $info,
-                'submit' => $submit
+                'submit' => $submit,
+                'config' => $config
             ];
         }
         return [];

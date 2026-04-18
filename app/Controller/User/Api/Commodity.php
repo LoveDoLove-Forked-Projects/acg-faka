@@ -145,6 +145,7 @@ class Commodity extends User
         $save = new Save(\App\Model\Commodity::class);
         $save->setMap($map);
         $save->addForceMap("owner", $user->id);
+        $save->addForceMap("config", $map['config'] ?? "");
         $save->enableCreateTime();
         $save = $this->query->save($save);
         if (!$save) {

@@ -11,6 +11,7 @@ use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Context\Interface\Request;
 use Kernel\Exception\JSONException;
+use Kernel\Util\Arr;
 
 #[Interceptor(Waf::class, Interceptor::TYPE_API)]
 class RechargeNotification extends User
@@ -37,6 +38,10 @@ class RechargeNotification extends User
 
         if (empty($data)) {
             $data = json_decode($request->raw(), true);
+        }
+
+        if (empty($data)) {
+            $data = Arr::xmlToArray((string)file_get_contents("php://input"));
         }
 
         if (empty($data)) {

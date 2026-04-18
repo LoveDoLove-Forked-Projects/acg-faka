@@ -108,7 +108,7 @@
                                 util.post({
                                     url: "/admin/api/app/versions", done: res => {
                                         res.data.forEach(item => {
-                                            let beta =  item?.beta == 1 ? `<b class="text-primary">beta</b>` : "<b class='text-success'>stable</b>";
+                                            let beta = item?.beta == 1 ? `<b class="text-primary">beta</b>` : "<b class='text-success'>stable</b>";
 
                                             $versionList.append(`<div class="layui-timeline-item">
                                                                         <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
@@ -174,7 +174,22 @@
             if (res.code != 200) {
                 return;
             }
-            localStorage.setItem("pluginVersions", JSON.stringify(res.data));
+
+            if (res.data && Object.keys(res.data).length > 0) {
+                localStorage.setItem("pluginVersions", JSON.stringify(res.data));
+            }
+
+            if (res.themePlugin > 0){
+                $(`.theme-update`).html(`${res.themePlugin}个更新`).show();
+            }
+
+            if (res.generalPlugin > 0){
+                $(`.general-update`).html(`${res.generalPlugin}个更新`).show();
+            }
+
+            if (res.payPlugin > 0){
+                $(`.payPlugin-update`).html(`${res.payPlugin}个更新`).show();
+            }
         });
     }
 

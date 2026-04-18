@@ -8,6 +8,7 @@ use App\Model\Business;
 use App\Model\UserRecharge;
 use App\Util\Date;
 use Kernel\Annotation\Interceptor;
+use Kernel\Util\Decimal;
 
 #[Interceptor(\App\Interceptor\ManageSession::class, Interceptor::TYPE_API)]
 class Dashboard extends \App\Controller\Base\API\Manage
@@ -39,7 +40,7 @@ class Dashboard extends \App\Controller\Base\API\Manage
             //新注册用户数量
             $data['user_register_num'] = (clone $user)->count();
             //打卡用户
-            $data['user_login_num'] = (clone $user)->count();
+            //  $data['user_login_num'] = (clone $user)->count();
 
         } else {
             //init
@@ -52,7 +53,7 @@ class Dashboard extends \App\Controller\Base\API\Manage
             //新注册用户数量
             $data['user_register_num'] = (clone $user)->whereBetween("create_time", $time)->count();
             //打卡用户
-            $data['user_login_num'] = (clone $user)->whereBetween("login_time", $time)->count();
+            // $data['user_login_num'] = (clone $user)->whereBetween("login_time", $time)->count();
         }
 
         //全站营业额
@@ -67,6 +68,9 @@ class Dashboard extends \App\Controller\Base\API\Manage
         $data['rebate'] = sprintf("%.2f", (clone $order)->sum("rebate"));
         //供货商手续费
         $data['cost'] = sprintf("%.2f", (clone $order)->sum("cost"));
+        //盈利
+        $data['profit'] = (new Decimal($data['turnover']))->sub((clone $order)->sum("rent"))->sub($data['divide_amount'])->sub($data['rebate'])->add($data['cost'])->getAmount();
+
         //店铺数量
         $data['business'] = $business->count();
         //未处理的提现

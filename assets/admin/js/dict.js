@@ -17,8 +17,8 @@ const _Dict = new class _Dict extends _DictUtil {
             "_common_device": [
                 {id: 0, "name": `<i class="fa-duotone fa-regular fa-window"></i> PC`},
                 {id: 1, "name": `<i class="fa-duotone fa-regular fa-robot"></i> 安卓`},
-                {id: 1, "name": `<i class="fa-duotone fa-regular fa-apple-whole"></i> IOS`},
-                {id: 1, "name": `<i class="fa-duotone fa-regular fa-tablet"></i> iPad`},
+                {id: 2, "name": `<i class="fa-duotone fa-regular fa-apple-whole"></i> IOS`},
+                {id: 3, "name": `<i class="fa-duotone fa-regular fa-tablet"></i> iPad`},
             ],
             "_user_status": [
                 {
@@ -171,7 +171,7 @@ const _Dict = new class _Dict extends _DictUtil {
                 {id: 4, name: `通用插件`},
                 {id: 5, name: `支付接口`},
                 {id: 6, name: `主题/模版`},
-                {id: 3, name: `免费应用`},
+                {id: 3, name: `免费应用`}
             ],
             "_developer_plugin_status": [
                 {

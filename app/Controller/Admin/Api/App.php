@@ -7,6 +7,8 @@ use App\Interceptor\ManageSession;
 use App\Interceptor\Waf;
 use App\Model\ManageLog;
 use App\Util\Opcache;
+use App\Util\PayConfig;
+use App\Util\Theme;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Exception\JSONException;
@@ -184,15 +186,17 @@ class App extends Manage
 
     /**
      * @return array
-     * @throws JSONException
      */
     public function getUpdates(): array
     {
         $file = BASE_PATH . "/runtime/plugin/store.cache";
+        $update = BASE_PATH . "/runtime/plugin/update.cache";
 
         $filectime = filectime($file);
+
         if ($filectime + 120 > time()) {
-            throw new JSONException("CACHE HIT");
+            $updateData = (array)json_decode((string)file_get_contents($update), true) ?: [];
+            return array_merge($this->json(200, "ok"), $updateData);
         }
 
         $plugins = $this->app->plugins([
@@ -203,26 +207,54 @@ class App extends Manage
         ]);
 
         //appStroe缓存
-        $appStore = (array)json_decode((string)file_get_contents($file), true);
+        $appStore = (array)json_decode((string)file_get_contents($file), true) ?: [];
+
+        $generalPlugin = 0;
+        $themePlugin = 0;
+        $payPlugin = 0;
 
         foreach ($plugins['rows'] as $plugin) {
-            // $info = Helper::isInstall($plugin['plugin_key'], (int)$plugin['type']);
-
-            /*     if (!$info) {
-                     continue;
-                 }*/
             $appStore[$plugin['plugin_key']] = [
                 "icon" => $plugin['icon'],
                 "name" => $plugin['plugin_name'],
                 "version" => $plugin['version'],
                 "update_content" => $plugin['update_content'],
                 "id" => $plugin['id'],
-                "type" => $plugin['type']
+                "type" => $plugin['type']  // 0 = 通用插件，2 = 模版 , 1 = 支付插件
             ];
+
+            switch ($plugin['type']) {
+                case 0:
+                    $plg = \Kernel\Util\Plugin::getPlugin($plugin['plugin_key']);
+                    if (!empty($plg)) {
+                        if ($plg['VERSION'] !== $plugin['version']) {
+                            $generalPlugin++;
+                        }
+                    }
+                    break;
+                case 1:
+                    $plg = PayConfig::info($plugin['plugin_key']);
+                    if (!empty($plg)) {
+                        if ($plg['version'] !== $plugin['version']) {
+                            $payPlugin++;
+                        }
+                    }
+                    break;
+                case 2:
+                    $plg = Theme::getConfig($plugin['plugin_key']);
+                    if (!empty($plg)) {
+                        if ($plg['info']['VERSION'] !== $plugin['version']) {
+                            $themePlugin++;
+                        }
+                    }
+                    break;
+            }
         }
 
+        $updateData = ['generalPlugin' => $generalPlugin, 'payPlugin' => $payPlugin, 'themePlugin' => $themePlugin];
         file_put_contents($file, json_encode($appStore));
-        return $this->json(200, "ok", $appStore);
+        file_put_contents($update, json_encode($updateData));
+        return array_merge($this->json(200, "ok", $appStore), $updateData);
     }
 
     /**
