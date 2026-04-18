@@ -1,14 +1,22 @@
 !function () {
 
     function _Base() {
+        const body = $('body');
         const shadeMobile = $('.site-mobile-shade');
+        const closeMobileDrawer = () => {
+            body.removeClass('site-mobile');
+        };
 
-        $('.layui-nav-tree a').click(() => {
+        $(document).on('click', '.layui-nav-tree a', () => {
             $('.net-loading').show();
+
+            if (util.isMobile()) {
+                closeMobileDrawer();
+            }
         });
 
         shadeMobile.on('click', function () {
-            $('body').removeClass('site-mobile');
+            closeMobileDrawer();
         });
 
         $('.logout').click(function () {
@@ -18,8 +26,9 @@
         });
 
         if (util.isMobile()) {
-            $(`.fly-logo`).attr("href", "javascript:void(0)").click(() => {
-                $('body').addClass('site-mobile');
+            $('.fly-logo').attr('href', 'javascript:void(0)').on('click', function (event) {
+                event.preventDefault();
+                body.addClass('site-mobile');
             });
         }
     }

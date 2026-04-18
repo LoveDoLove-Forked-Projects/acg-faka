@@ -1,5 +1,5 @@
 !function () {
-    let table;
+    let table, _LogPid;
 
     table = new Table("/admin/api/store/data", "#shared-store-table");
 
@@ -55,7 +55,7 @@
                 return `<span class="table-item"><img src="${b.domain}/favicon.ico" class="table-item-icon"><span class="table-item-name">${a}</span></span>`;
             }
         }, {
-            field: 'domain', title: '店铺地址' , formatter : format.link
+            field: 'domain', title: '店铺地址', formatter: format.link
         }, {
             field: 'balance', title: '余额(缓存)', formatter: _ => format.money(_, "green")
         }, {
@@ -66,7 +66,63 @@
             field: 'type', title: '协议', dict: "_shared_type"
         },
         {
-            field: 'operation', title: '操作', type: 'button', buttons: [
+            field: 'operation', class: "nowrap", title: '操作', type: 'button', buttons: [
+                {
+                    icon: 'fa-duotone fa-regular fa-arrows-rotate',
+                    tips: "一键同步此店铺下的所有本地商品数据",
+                    class: "text-primary",
+                    click: (event, value, row, index) => {
+                        let logPid = _LogPid = util.generateRandStr(16);
+
+                        util.get(`/admin/api/store/getSyncRemoteLog?id=${row.id}`, data => {
+                            layer.open({
+                                type: 1,
+                                shade: 0.4,
+                                shadeClose: true,
+                                title: '<i class="fa-duotone fa-regular fa-ban-bug"></i> 同步日志',
+                                btn: [util.icon("fa-duotone fa-regular fa-arrows-rotate") + "<span class='sync-item-btn'>开始同步</span>", util.icon(`fa-duotone fa-regular fa-broom-wide`) + "清空日志", util.icon("fa-duotone fa-regular fa-xmark") + "关闭"],
+                                content: '<textarea class="log-textarea" style="width: 100%;height: 100%;border: none;color: grey;padding: 5px;">' + data?.log + '</textarea>',
+                                area: util.isPc() ? ["860px", "660px"] : ["100%", "100%"],
+                                maxmin: true,
+                                btn1: (index, layero) => {
+                                    layer.msg("开始同步，请观察日志..");
+                                    $(`.sync-item-btn`).html("正在同步..");
+                                    $.get(`/admin/api/store/syncRemote?id=${row.id}`, () => {
+                                        layer.msg("同步已结束");
+                                        $(`.sync-item-btn`).html("开始同步");
+                                    });
+                                    return false;
+                                },
+                                btn2: (index, layero) => {
+                                    util.get(`/admin/api/store/clearSyncRemoteLog?id=${row.id}`, () => {
+                                        layer.msg("日志已清空");
+                                        $('.log-textarea').html("");
+                                    });
+                                    return false;
+                                },
+                                success: (layero, index) => {
+                                    util.timer(() => {
+                                        return new Promise(resolve => {
+                                            if (_LogPid !== logPid) {
+                                                resolve(false);
+                                                return;
+                                            }
+                                            $.get(`/admin/api/store/getSyncRemoteLog?id=${row.id}`, res => {
+                                                if (res.data.log != $('.log-textarea').html()) {
+                                                    $('.log-textarea').html(res.data.log);
+                                                }
+                                                resolve(true);
+                                            });
+                                        });
+                                    }, 1500);
+                                },
+                                end: () => {
+                                    _LogPid = null;
+                                }
+                            });
+                        });
+                    }
+                },
                 {
                     icon: 'fa-duotone fa-regular fa-link',
                     tips: "接入货源",

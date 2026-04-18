@@ -53,6 +53,7 @@ class Image implements \App\Service\Image
                 $source = @imagecreatefromgif($imageDiskPath);
                 break;
             case 'png':
+            case 'ico':
                 $source = @imagecreatefrompng($imageDiskPath);
                 break;
             case 'webp':
@@ -155,7 +156,7 @@ class Image implements \App\Service\Image
     {
         $response = Http::make()->head($url);
         $mimeType = $response->getHeaderLine('Content-Type');
-        $validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/x-icon'];
         if (in_array($mimeType, $validImageTypes)) {
             return true;
         }
@@ -174,7 +175,7 @@ class Image implements \App\Service\Image
     {
         $extension = $this->getImageExtensionFromURL($url);
 
-        if (!in_array($extension, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
+        if (!in_array($extension, ['jpg', 'jpeg', 'gif', 'png', 'webp', 'ico'])) {
             throw new JSONException("检测到[$url]不是一张有效的图片");
         }
 

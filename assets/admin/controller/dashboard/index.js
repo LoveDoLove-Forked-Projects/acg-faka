@@ -74,7 +74,7 @@
                     }
                 },
                 legend: {
-                    data: ['交易金额', '提现', '充值'],
+                    data: ['盈利', '交易金额', '提现', '充值'],
                     textStyle: {
                         fontSize: 12
                     }
@@ -110,6 +110,26 @@
                 ],
                 series: [
                     {
+                        name: '盈利',
+                        type: 'line',
+                        stack: 'Total',
+                        label: {
+                            show: true,
+                            position: 'top',
+                            fontSize: 10
+                        },
+                        areaStyle: {
+                            opacity: 0.3
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: res.data.series.profit,
+                        itemStyle: {
+                            color: '#3e8300'
+                        }
+                    },
+                    {
                         name: '交易金额',
                         type: 'line',
                         stack: 'Total',
@@ -141,7 +161,7 @@
                         },
                         data: res.data.series.cash,
                         itemStyle: {
-                            color: '#28a745'
+                            color: '#351be6'
                         }
                     },
                     {
@@ -156,7 +176,7 @@
                         },
                         data: res.data.series.recharge,
                         itemStyle: {
-                            color: '#dc3545'
+                            color: '#f12de0'
                         }
                     }
                 ]

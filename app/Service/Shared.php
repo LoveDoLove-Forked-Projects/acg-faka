@@ -118,4 +118,11 @@ interface Shared
      * @return string
      */
     public function AdjustmentAmount(int $type, float $premium, string|int|float $amount): string;
+
+
+    /**
+     * @param Commodity|int $commodity
+     * @return bool
+     */
+    public function syncRemoteItem(Commodity|int $commodity): bool;
 }

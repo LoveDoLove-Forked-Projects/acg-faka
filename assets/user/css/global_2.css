@@ -475,6 +475,10 @@ pre {
     color: rgba(243, 188, 181, 0.78) !important;
 }
 
+.fly-mobile-shop-link {
+    display: none;
+}
+
 .fly-nav {
     text-align: center;
 }
@@ -2348,6 +2352,30 @@ body .fly-user-main {
         display: none;
     }
 
+    .fly-mobile-shop-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 13px;
+        left: 62px;
+        height: 30px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ffb1c8, #ff8f7d);
+        box-shadow: 0 8px 20px rgba(255, 143, 125, 0.22);
+        color: #fff !important;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 30px;
+        z-index: 123;
+    }
+
+    .fly-mobile-shop-link:hover {
+        color: #fff !important;
+        opacity: .92;
+    }
+
     .fly-main {
         width: 100%;
     }
@@ -2996,4 +3024,3 @@ input[name=btSelectAll] {
     cursor: pointer;
     height: 48px;
 }
-

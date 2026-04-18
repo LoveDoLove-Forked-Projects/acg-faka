@@ -45,12 +45,30 @@ class UserGroup extends Model
         if (!self::$userGroups) {
             self::$userGroups = UserGroup::query()->orderBy("recharge", "desc")->get();
         }
-        foreach (self::$userGroups as $inedx => $group) {
+        foreach (self::$userGroups as $index => $group) {
             if ($recharge >= $group->recharge) {
                 if ($next) {
-                    return self::$userGroups[$inedx - 1];
+                    return self::$userGroups[$index - 1];
                 }
                 return $group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param int $groupId
+     * @return array|null
+     */
+    public static function getRechargeScope(int $groupId): ?array
+    {
+        if (!self::$userGroups) {
+            self::$userGroups = UserGroup::query()->orderBy("recharge", "desc")->get();
+        }
+        foreach (self::$userGroups as $index => $group) {
+            if ($groupId === $group->id) {
+                $next = self::$userGroups[$index - 1];
+                return ["min" => $group->recharge, "max" => $next ? $next->recharge : 0];
             }
         }
         return null;

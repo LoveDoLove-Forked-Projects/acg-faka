@@ -107,6 +107,7 @@ class Dashboard extends \App\Controller\Base\API\Manage
 
 
         $series = [
+            "profit" => [],
             "trade" => [],
             "cash" => [],
             "recharge" => []
@@ -117,6 +118,14 @@ class Dashboard extends \App\Controller\Base\API\Manage
             //交易额
             $amount = \App\Model\Order::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("amount");
             $series["trade"][] = sprintf("%.2f", $amount);
+            //利润
+            $divideAmount = \App\Model\Order::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("divide_amount");;
+            $rebate = \App\Model\Order::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("rebate");;
+            $cost = \App\Model\Order::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("cost");
+            $rent = \App\Model\Order::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("rent");
+
+            $series['profit'][] = (new Decimal($amount))->sub($rent)->sub($divideAmount)->sub($rebate)->add($cost)->getAmount();
+
             //提现
             $cash = \App\Model\Cash::query()->whereBetween("create_time", [Date::weekDay($i, Date::TYPE_START), Date::weekDay($i, Date::TYPE_END)])->where("status", 1)->sum("amount");
             $series["cash"][] = sprintf("%.2f", $cash);

@@ -233,8 +233,19 @@ class Store extends Manage
                 //自动加价
                 $config = $this->shared->AdjustmentPrice((string)$item['config'], $item['price'], $item['user_price'], $premiumType, $premium);
 
+                $_config = Ini::toArray((string)$item['config']);
+
+                if (!empty($_config['sku'])) {
+                    $config['config']['sku_cost'] = $_config['sku'];
+                }
+
+                if (!empty($_config['category'])) {
+                    $config['config']['category_cost'] = $_config['category'];
+                }
+
                 $commodity->config = Ini::toConfig($config['config']);
                 $commodity->price = $config['price'];
+                $commodity->factory_price = $item['user_price'];
                 $commodity->user_price = $config['user_price'];
 
                 $commodity->save();
@@ -247,6 +258,55 @@ class Store extends Manage
         ManageLog::log($this->getManage(), "[店铺共享]进行了克隆商品({$shared->name})，总数量：{$count}，成功：{$success}，失败：{$error}");
         return $this->json(200, "拉取结束，总数量：{$count}，成功：{$success}，失败：{$error}");
     }
+
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function syncRemote(int $id): array
+    {
+        $list = \App\Model\Commodity::query()->where("shared_id", $id)->get();
+        $logName = "sync_remote_item_{$id}";
+        \Kernel\Util\Log::inst()->clear($logName);
+        foreach ($list as $e) {
+            try {
+                $state = $this->shared->syncRemoteItem($e->id);
+                if ($state) {
+                    \Kernel\Util\Log::inst()->write(strip_tags($e->name) . " -> 同步成功", $logName);
+                } else {
+                    \Kernel\Util\Log::inst()->write(strip_tags($e->name) . " -> 同步失败", $logName);
+                }
+            } catch (\Throwable $x) {
+                \Kernel\Util\Log::inst()->write(strip_tags($e->name) . " -> 同步失败:" . $x->getMessage(), $logName);
+            }
+        }
+        return $this->json();
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getSyncRemoteLog(int $id): array
+    {
+        $logName = "sync_remote_item_{$id}";
+        $log = \Kernel\Util\Log::inst()->get($logName);
+        return $this->json(data: ["log" => $log]);
+    }
+
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function clearSyncRemoteLog(int $id): array
+    {
+        $logName = "sync_remote_item_{$id}";
+        \Kernel\Util\Log::inst()->clear($logName);
+        return $this->json();
+    }
+
 
     /**
      * @return array

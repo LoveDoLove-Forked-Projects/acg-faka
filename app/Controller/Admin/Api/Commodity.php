@@ -205,16 +205,24 @@ class Commodity extends Manage
      */
     public function fastEnable(): array
     {
-        $list = (array)explode(",", (string)$_POST['list']);
-        unset($_POST['list']);
-        foreach ($_POST as $key => $val) {
+        $map = $this->request->post();
+        $list = (array)explode(",", (string)$this->request->post("list"));
+        $sharedSync = $map['shared_sync'] == 0 ? 0 : 1;
+
+        unset($map['list'], $map['shared_sync']);
+
+        foreach ($map as $key => $val) {
             if ($val == 0) {
-                $_POST[$key] = 0;
+                $map[$key] = 0;
             } else {
-                $_POST[$key] = 1;
+                $map[$key] = 1;
             }
         }
-        \App\Model\Commodity::query()->whereIn('id', $list)->update($_POST);
+
+        \App\Model\Commodity::query()->whereIn('id', $list)->update($map);
+        \App\Model\Commodity::query()->whereIn('id', $list)->where("shared_id", ">", 0)->update(["shared_sync" => $sharedSync]);
+
+
         ManageLog::log($this->getManage(), "[批量更新]商品状态");
         return $this->json(200, '更新成功');
     }

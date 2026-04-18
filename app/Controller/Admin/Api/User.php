@@ -36,11 +36,22 @@ class User extends Manage
     public function data(): array
     {
         $map = $this->request->post();
+        $groupId = $map["equal-group_id"] ?? 0;
+        unset($map["equal-group_id"]);
+
         $get = new Get(\App\Model\User::class);
         $get->setWhere($map);
         $get->setPaginate((int)$this->request->post("page"), (int)$this->request->post("limit"));
         $get->setOrderBy(...$this->query->getOrderBy($map, "id", "desc"));
-        $data = $this->query->get($get, function (Builder $builder) {
+        $data = $this->query->get($get, function (Builder $builder) use ($groupId) {
+            if ($groupId > 0) {
+                $rechargeScope = UserGroup::getRechargeScope((int)$groupId);
+                $builder = $builder->where("recharge", ">=", $rechargeScope['min']);
+                if ($rechargeScope['max'] > 0) {
+                    $builder = $builder->where("recharge", "<=", $rechargeScope['max']);
+                }
+            }
+
             return $builder->with([
                 'parent' => function (Relation $relation) {
                     $relation->select(["id", "username", "avatar"]);
@@ -54,9 +65,6 @@ class User extends Manage
     /**
      * @return array
      * @throws JSONException
-     * @throws NotFoundException
-     * @throws RuntimeException
-     * @throws \ReflectionException
      */
     public function save(): array
     {
@@ -197,7 +205,7 @@ class User extends Manage
      */
     public function del(): array
     {
-        $deleteBatchEntity = new Delete(\App\Model\User::class , $_POST['list']);
+        $deleteBatchEntity = new Delete(\App\Model\User::class, $_POST['list']);
         $count = $this->query->delete($deleteBatchEntity);
         if ($count == 0) {
             throw new JSONException("没有移除任何数据");

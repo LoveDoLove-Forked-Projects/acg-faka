@@ -460,7 +460,7 @@ class Shared implements \App\Service\Shared
         } elseif ($shared->type == 2) {
             return "10000000";
         }
-        
+
         $stock = $this->post($shared->domain . "/shared/commodity/stock", $shared->app_id, $shared->app_key, [
             "code" => $code,
             "race" => $race,
@@ -541,5 +541,60 @@ class Shared implements \App\Service\Shared
     {
         $_tmp = new Decimal($amount, 2);
         return $type == 0 ? $_tmp->add($premium)->getAmount() : $_tmp->add((new Decimal($premium, 3))->mul($amount)->getAmount())->getAmount();
+    }
+
+
+    /**
+     * @param Commodity|int $commodity
+     * @return bool
+     * @throws GuzzleException
+     * @throws JSONException
+     */
+    public function syncRemoteItem(Commodity|int $commodity): bool
+    {
+        if (is_int($commodity)) {
+            $commodity = Commodity::query()->find($commodity);
+        }
+
+        if (!$commodity) {
+            return false;
+        }
+
+        $shared = \App\Model\Shared::query()->find($commodity->shared_id);
+
+        if (!$shared) {
+            return false;
+        }
+
+        $remoteItem = $this->item($shared, $commodity->shared_code);
+        $base = $this->AdjustmentPrice(Ini::toConfig($remoteItem['config'] ?: []), (string)$remoteItem['price'], (string)$remoteItem['user_price'], $commodity->shared_premium_type, $commodity->shared_premium);
+
+
+        $_config = $remoteItem['config'] ?: [];
+
+        if (!empty($_config['sku'])) {
+            $base['config']['sku_cost'] = $_config['sku'];
+        }
+
+        if (!empty($_config['category'])) {
+            $base['config']['category_cost'] = $_config['category'];
+        }
+
+        $commodity->price = $base['price'];
+        $commodity->user_price = $base['user_price'];
+        $commodity->config = Ini::toConfig($base['config']);
+        $commodity->draft_status = $remoteItem['draft_status'];
+        $commodity->draft_premium = $remoteItem['draft_premium'] > 0 ? $this->AdjustmentAmount($commodity->shared_premium_type, $commodity->shared_premium, $remoteItem['draft_premium']) : 0;
+        $commodity->seckill_status = $remoteItem['seckill_status'];
+        $commodity->seckill_start_time = $remoteItem['seckill_start_time'];
+        $commodity->seckill_end_time = $remoteItem['seckill_end_time'];
+        $commodity->widget = is_array($remoteItem['widget']) ? json_encode($remoteItem['widget']) : $remoteItem['widget'];
+        $commodity->minimum = $remoteItem['minimum'];
+        $commodity->maximum = $remoteItem['maximum'];
+        $commodity->stock = $remoteItem['stock'];
+        $commodity->contact_type = $remoteItem['contact_type'];
+        $commodity->save();
+
+        return true;
     }
 }

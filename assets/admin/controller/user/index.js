@@ -246,7 +246,6 @@
     ]);
 
 
-
     table.setFloatMessage([
         {field: 'nicename', title: '真实姓名'}
         , {field: 'total_coin', title: '总硬币'}
@@ -299,6 +298,7 @@
 
     table.setSearch([
         {title: "用户名", name: "search-username", type: "input"},
+        {title: "会员等级", name: "equal-group_id", type: "select", dict: "user_group,id,name"},
         {title: "邮箱", name: "equal-email", type: "input"},
         {title: "手机号", name: "equal-phone", type: "input"},
         {title: "QQ号", name: "equal-qq", type: "input"},

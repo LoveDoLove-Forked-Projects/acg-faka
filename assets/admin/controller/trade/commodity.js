@@ -1010,6 +1010,13 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                             type: "switch",
                             text: "启用"
                         },
+                        {
+                            title: "远端商品开启同步",
+                            name: "shared_sync",
+                            type: "switch",
+                            text: "启用",
+                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端信息同步功能"
+                        }
                     ]
                 },
             ],

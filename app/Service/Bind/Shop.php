@@ -184,6 +184,16 @@ class Shop implements \App\Service\Shop
 
                 $base = $this->shared->AdjustmentPrice(Ini::toConfig($remoteItem['config'] ?: []), (string)$remoteItem['price'], (string)$remoteItem['user_price'], $new->shared_premium_type, $new->shared_premium);
 
+                $_config = $remoteItem['config'] ?: [];
+
+                if (!empty($_config['sku'])) {
+                    $base['config']['sku_cost'] = $_config['sku'];
+                }
+
+                if (!empty($_config['category'])) {
+                    $base['config']['category_cost'] = $_config['category'];
+                }
+
                 $commodity->price = $new->price = $base['price'];
                 $commodity->user_price = $new->user_price = $base['user_price'];
                 $commodity->config = $new->config = Ini::toConfig($base['config']);
