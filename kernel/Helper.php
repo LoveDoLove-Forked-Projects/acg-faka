@@ -123,34 +123,28 @@ if (!function_exists("setConfig")) {
      */
     function setConfig(array $data, string $file, bool $reset = false): void
     {
-        if (file_exists($file) && !$reset) {
-            $config = require($file);
-        } else {
-            $config = [];
-        }
-        foreach ($data as $x => $b) {
-            $config[$x] = $b;
-        }
-        //写入到文件
-        $ret = "<?php
-declare (strict_types=1);\n\nreturn [\n";
-        foreach ($config as $k => $v) {
-            if (is_array($v)) {
-                $akv = "[";
-                foreach ($v as $av) {
-                    $akv .= "'" . str_replace("'", "\\'", $av) . "'" . ",";
-                }
-                $akv = trim($akv, ",");
-                $akv .= "]";
-                $value = $akv;
-            } else {
-                $value = "'" . str_replace("'", "\\'", (string)$v) . "'";
+        $config = [];
+
+        if (!$reset && is_file($file)) {
+            $loaded = require $file;
+            if (is_array($loaded)) {
+                $config = $loaded;
             }
-            $ret .= "    '{$k}' => $value,\n";
         }
-        $ret .= '];';
-        if (file_put_contents($file, $ret) === false) {
-            throw new \Kernel\Exception\JSONException("没有文件写入权限");
+
+        $config = array_replace($config, $data);
+
+        $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+return %s;
+PHP;
+
+        $content = sprintf($content, var_export($config, true));
+
+        if (file_put_contents($file, $content, LOCK_EX) === false) {
+            throw new \Kernel\Exception\JSONException('没有文件写入权限');
         }
 
         Opcache::invalidate($file);

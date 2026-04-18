@@ -580,9 +580,15 @@ class Shared implements \App\Service\Shared
             $base['config']['category_cost'] = $_config['category'];
         }
 
-        $commodity->price = $base['price'];
-        $commodity->user_price = $base['user_price'];
-        $commodity->config = Ini::toConfig($base['config']);
+        if ($commodity->shared_amount_sync === 1) {
+            $commodity->price = $base['price'];
+            $commodity->user_price = $base['user_price'];
+        }
+
+        if ($commodity->shared_config_sync === 1) {
+            $commodity->config = Ini::toConfig($base['config']);
+        }
+
         $commodity->draft_status = $remoteItem['draft_status'];
         $commodity->draft_premium = $remoteItem['draft_premium'] > 0 ? $this->AdjustmentAmount($commodity->shared_premium_type, $commodity->shared_premium, $remoteItem['draft_premium']) : 0;
         $commodity->seckill_status = $remoteItem['seckill_status'];

@@ -208,8 +208,10 @@ class Commodity extends Manage
         $map = $this->request->post();
         $list = (array)explode(",", (string)$this->request->post("list"));
         $sharedSync = $map['shared_sync'] == 0 ? 0 : 1;
+        $sharedAmountSync = $map['shared_amount_sync'] == 0 ? 0 : 1;
+        $sharedConfigSync = $map['shared_config_sync'] == 0 ? 0 : 1;
 
-        unset($map['list'], $map['shared_sync']);
+        unset($map['list'], $map['shared_sync'], $map['shared_amount_sync'], $map['shared_config_sync']);
 
         foreach ($map as $key => $val) {
             if ($val == 0) {
@@ -220,7 +222,11 @@ class Commodity extends Manage
         }
 
         \App\Model\Commodity::query()->whereIn('id', $list)->update($map);
-        \App\Model\Commodity::query()->whereIn('id', $list)->where("shared_id", ">", 0)->update(["shared_sync" => $sharedSync]);
+        \App\Model\Commodity::query()->whereIn('id', $list)->where("shared_id", ">", 0)->update([
+            "shared_sync" => $sharedSync,
+            "shared_amount_sync" => $sharedAmountSync,
+            "shared_config_sync" => $sharedConfigSync
+        ]);
 
 
         ManageLog::log($this->getManage(), "[批量更新]商品状态");

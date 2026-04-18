@@ -49,6 +49,8 @@ use Kernel\Exception\JSONException;
  * @property int $minimum
  * @property int $maximum
  * @property int $shared_sync
+ * @property int $shared_amount_sync
+ * @property int $shared_config_sync
  * @property int $inventory_sync
  * @property int $hide
  * @property array|string $config
@@ -100,6 +102,9 @@ class Commodity extends Model
         'purchase_count' => 'integer',
         'minimum' => 'integer',
         'maximum' => 'integer',
+        'shared_amount_sync' => 'integer',
+        'shared_config_sync' => 'integer',
+        'shared_sync' => 'integer',
         'shared_stock' => 'json'
     ];
 

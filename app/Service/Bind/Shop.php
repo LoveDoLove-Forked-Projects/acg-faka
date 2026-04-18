@@ -148,7 +148,7 @@ class Shop implements \App\Service\Shop
                 "status", "owner", "delivery_way", "contact_type", "password_status", "level_price",
                 "level_disable", "coupon", "shared_id", "shared_code", "shared_premium", "shared_premium_type", "seckill_status",
                 "seckill_start_time", "seckill_end_time", "draft_status", "draft_premium", "inventory_hidden",
-                "widget", "minimum", "maximum", "shared_sync", "config", "stock", "code"])
+                "widget", "minimum", "maximum", "shared_sync", "config", "stock", "code", "shared_amount_sync", "shared_config_sync"])
             ->withCount(['order as order_sold' => function (Builder $relation) {
                 $relation->where("delivery_status", 1);
             }]);
@@ -194,9 +194,16 @@ class Shop implements \App\Service\Shop
                     $base['config']['category_cost'] = $_config['category'];
                 }
 
-                $commodity->price = $new->price = $base['price'];
-                $commodity->user_price = $new->user_price = $base['user_price'];
-                $commodity->config = $new->config = Ini::toConfig($base['config']);
+                if ($commodity->shared_amount_sync === 1) {
+                    $commodity->price = $new->price = $base['price'];
+                    $commodity->user_price = $new->user_price = $base['user_price'];
+                }
+
+
+                if ($commodity->shared_config_sync === 1) {
+                    $commodity->config = $new->config = Ini::toConfig($base['config']);
+                }
+
                 $commodity->draft_status = $new->draft_status = $remoteItem['draft_status'];
                 $commodity->draft_premium = $new->draft_premium = $remoteItem['draft_premium'] > 0 ? $this->shared->AdjustmentAmount($new->shared_premium_type, $new->shared_premium, $remoteItem['draft_premium']) : 0;
                 $commodity->seckill_status = $new->seckill_status = $remoteItem['seckill_status'];

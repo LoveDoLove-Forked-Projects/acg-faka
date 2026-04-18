@@ -189,6 +189,18 @@
                                                 tips: "启用后，远端商品信息会实时同步本地，远端价发生变化会立即同步"
                                             },
                                             {
+                                                title: "远端价格同步",
+                                                name: "shared_amount_sync",
+                                                type: "switch",
+                                                tips: "启用后，远端的价格会实时同步本地商品"
+                                            },
+                                            {
+                                                title: "远端配置同步",
+                                                name: "shared_config_sync",
+                                                type: "switch",
+                                                tips: "启用后，远端的商品配置会实时同步本地商品（如种类，SKU）"
+                                            },
+                                            {
                                                 title: "立即上架",
                                                 name: "shelves",
                                                 type: "switch",

@@ -48,7 +48,7 @@ class User extends Manage
                 $rechargeScope = UserGroup::getRechargeScope((int)$groupId);
                 $builder = $builder->where("recharge", ">=", $rechargeScope['min']);
                 if ($rechargeScope['max'] > 0) {
-                    $builder = $builder->where("recharge", "<=", $rechargeScope['max']);
+                    $builder = $builder->where("recharge", "<", $rechargeScope['max']);
                 }
             }
 

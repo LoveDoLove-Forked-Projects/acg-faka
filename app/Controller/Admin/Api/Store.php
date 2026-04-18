@@ -152,6 +152,9 @@ class Store extends Manage
         $premiumType = (int)$map['premium_type']; // 加价模式
         $imageDownload = (bool)$map['image_download'];
         $shelves = (int)$map['shelves'] == 0 ? 0 : 1; // 立即上架
+        $sharedSync = (int)$map['shared_sync'] == 0 ? 0 : 1;
+        $sharedAmountSync = (int)$map['shared_amount_sync'] == 0 ? 0 : 1;
+        $sharedConfigSync = (int)$map['shared_config_sync'] == 0 ? 0 : 1;
 
         $shared = Shared::query()->find($storeId);
 
@@ -210,6 +213,9 @@ class Store extends Manage
                 $commodity->shared_premium = $premium;
                 $commodity->shared_premium_type = $premiumType;
                 $commodity->seckill_status = $item['seckill_status'];
+                $commodity->shared_sync = $sharedSync;
+                $commodity->shared_amount_sync = $sharedAmountSync;
+                $commodity->shared_config_sync = $sharedConfigSync;
 
                 if ($commodity->seckill_status == 1) {
                     $commodity->seckill_start_time = $item['seckill_start_time'];

@@ -446,11 +446,15 @@
                                     _.show("shared_premium_type");
                                     _.show("shared_premium");
                                     _.show("shared_sync");
+                                    _.show("shared_amount_sync");
+                                    _.show("shared_config_sync");
                                 } else {
                                     _.hide("shared_code");
                                     _.hide("shared_premium_type");
                                     _.hide("shared_premium");
                                     _.hide("shared_sync");
+                                    _.hide("shared_amount_sync");
+                                    _.hide("shared_config_sync");
                                 }
                             },
                             complete: (_, __) => {
@@ -469,7 +473,21 @@
                             title: "远端信息同步",
                             name: "shared_sync",
                             type: "switch",
-                            tips: "启用后，远端商品信息会实时同步本地，远端价发生变化会立即同步",
+                            tips: "启用后，远端商品信息会实时同步本地",
+                            hide: true
+                        },
+                        {
+                            title: "远端价格同步",
+                            name: "shared_amount_sync",
+                            type: "switch",
+                            tips: "启用后，远端商品价格会实时同步本地，远端价发生变化会立即同步",
+                            hide: true
+                        },
+                        {
+                            title: "远端配置参数同步",
+                            name: "shared_config_sync",
+                            type: "switch",
+                            tips: "启用后，远端商品配置参数会实时同步本地，比如SKU/种类这些参数",
                             hide: true
                         },
                         {
@@ -711,6 +729,9 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
         }
         , {
             field: 'card_count', title: '库存', class: "nowrap", formatter: function (val, item) {
+                if (item.shared_id > 0) {
+                    return '-';
+                }
                 if (item.delivery_way == 0) {
                     return item.card_count + ` <a class='add-card' data-id='${item.id}' style='color: green;' href='javascript:void(0);'>加卡</a>`;
                 }
@@ -1016,6 +1037,20 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                             type: "switch",
                             text: "启用",
                             tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端信息同步功能"
+                        },
+                        {
+                            title: "远端价格开启同步",
+                            name: "shared_amount_sync",
+                            type: "switch",
+                            text: "启用",
+                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端商品价格同步功能"
+                        },
+                        {
+                            title: "远端配置参数开启同步",
+                            name: "shared_config_sync",
+                            type: "switch",
+                            text: "启用",
+                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端商品配置参数同步功能"
                         }
                     ]
                 },
