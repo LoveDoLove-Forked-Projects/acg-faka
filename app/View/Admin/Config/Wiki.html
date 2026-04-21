@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wiki - #{$pluginName}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link href="/assets/common/js/docsify/lib/themes/vue.css" rel="stylesheet">
+
+    <style>
+        .app-name .app-name-link img {
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .app-name .app-name-link {
+            pointer-events: none;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+    window.$docsify = {
+        basePath: "#{$basePath}",
+        name: 'WIKI - #{$pluginName}',
+        repo: '',
+        homepage: '#{$homepage}',
+        loadSidebar: true,
+        loadNavbar: false,
+        fallbackLanguages: ['zh-cn'],
+        mergeNavbar: true,
+        themeColor: '#3F51B5',
+        logo: '#{$icon}',
+        auto2top: true,
+        subMaxLevel: 4,
+        topMargin: 20,
+        search: {
+            depth: 6,
+            noData: {
+                '/': '没有找到结果!',
+            },
+            paths: 'auto',
+            placeholder: {
+                '/': '输入关键词搜索',
+            }
+        },
+        alias: {
+            '/_sidebar.md': '#{$sidebar}'
+        }
+    }
+</script>
+<script src="/assets/common/js/docsify/lib/docsify.min.js"></script>
+<script src="/assets/common/js/docsify/lib/plugins/search.min.js"></script>
+</body>
+</html>

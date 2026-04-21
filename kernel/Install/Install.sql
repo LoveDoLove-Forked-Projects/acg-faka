@@ -247,6 +247,9 @@ INSERT INTO `__PREFIX__config` VALUES (42, 'background_mobile_url', '');
 INSERT INTO `__PREFIX__config` VALUES (43, 'username_len', '6');
 INSERT INTO `__PREFIX__config` VALUES (44, 'cash_type_balance', '0');
 INSERT INTO `__PREFIX__config` VALUES (45, 'callback_domain', '');
+INSERT INTO `__PREFIX__config` VALUES (46, 'session_expire', '0');
+INSERT INTO `__PREFIX__config` VALUES (47, 'cash_type_usdt', '1');
+INSERT INTO `__PREFIX__config` VALUES (48, 'user_center_theme', 'MountFuji');
 
 
 DROP TABLE IF EXISTS `__PREFIX__coupon`;

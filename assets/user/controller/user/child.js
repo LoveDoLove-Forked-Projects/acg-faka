@@ -14,7 +14,7 @@
         , {
             field: 'create_time', title: '注册时间'
         }
-        , {field: 'status', title: '状态', dict: "_user_status"}
+        , {field: 'status', title: '状态', dict: "_user_status" , class:"normal"}
         , {
             field: 'operation', title: '操作', type: 'button', buttons: [
                 {

@@ -241,17 +241,17 @@ class Store extends Manage
 
                 $_config = Ini::toArray((string)$item['config']);
 
-                if (!empty($_config['sku'])) {
-                    $config['config']['sku_cost'] = $_config['sku'];
+                if (!empty($_config['sku_cost'])) {
+                    unset($config['config']['sku_cost']);
                 }
 
-                if (!empty($_config['category'])) {
-                    $config['config']['category_cost'] = $_config['category'];
+                if (!empty($_config['category_cost'])) {
+                    unset($config['config']['category_cost']);
                 }
 
                 $commodity->config = Ini::toConfig($config['config']);
                 $commodity->price = $config['price'];
-                $commodity->factory_price = $item['user_price'];
+                $commodity->factory_price = 0;
                 $commodity->user_price = $config['user_price'];
 
                 $commodity->save();

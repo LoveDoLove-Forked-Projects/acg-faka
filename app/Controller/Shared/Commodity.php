@@ -378,6 +378,29 @@ class Commodity extends Shared
         return $this->json(data: ["stock" => $stock]);
     }
 
+    /**
+     * @return array
+     * @throws JSONException
+     */
+    public function valuation(): array
+    {
+        $commodity = \App\Model\Commodity::query()->where("code", $this->request->post("code"))->first();
+
+        if (!$commodity) {
+            throw new JSONException("商品不存在#0");
+        }
+
+        $price = $this->order->valuation(
+            commodity: $commodity,
+            num: (int)$this->request->post("num"),
+            race: (string)$this->request->post("race"),
+            sku: (array)$this->request->post("sku"),
+            cardId: (int)$this->request->post("card_id"),
+            group: $this->getUserGroup()
+        );
+        $price = $this->shop->getSubstationPrice($commodity, $price);
+        return $this->json(data: ["price" => $price]);
+    }
 
     /**
      * @return array

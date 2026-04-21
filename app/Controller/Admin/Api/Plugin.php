@@ -39,11 +39,11 @@ class Plugin extends Manage
                 if ($plugin['VERSION'] !== $appStore[$plugin['PLUGIN_NAME']]["version"]) {
                     $plugins[$key]['HAVE_UPDATE'] = true;
                 }
-
             }
+
             //判断文档是否存在
-            if (file_exists($path . $plugins[$key]["id"] . "/Wiki/Index.html")) {
-                $plugins[$key]['wiki'] = "/app/Plugin/{$plugins[$key]["id"]}/Wiki/Index.html";
+            if (is_dir($path . $plugins[$key]["id"] . "/Wiki")) {
+                $plugins[$key]['wiki'] = "/admin/plugin/wiki?plugin={$plugins[$key]["id"]}";
             }
 
             if ($status !== "" && $status !== null) {

@@ -164,6 +164,15 @@
             }
             modal(themes[userTheme]);
         });
+
+        $('.theme-user-setting').click(function () {
+            let userTheme = $('select[name=user_center_theme]').val();
+            if (userTheme == 0) {
+                layer.msg("没有模板可以设置哦，请不要瞎点(>_<)");
+                return;
+            }
+            modal(themes[userTheme]);
+        });
     }
 
 

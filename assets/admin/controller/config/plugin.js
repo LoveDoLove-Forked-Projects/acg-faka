@@ -167,11 +167,11 @@
             ]
         }
         , {
-            field: 'wiki', title: '文档手册', formatter: function (val, item) {
+            field: 'wiki', title: 'Wiki', formatter: function (val, item) {
                 if (!item.wiki) {
                     return '-';
                 }
-                return '<a class="badge badge-light-primary" href="' + item.wiki + '" target="_blank">查看文档</a>';
+                return '<a class="badge badge-light-primary" href="' + item.wiki + '" target="_blank">文档</a>';
             }
         }
         , {

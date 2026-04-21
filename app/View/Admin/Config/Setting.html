@@ -163,7 +163,38 @@
                                 <!--end::Col-->
                             </div>
                             <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <!--begin::Label-->
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">会员中心</label>
+                                <!--end::Label-->
+                                <!--begin::Col-->
+                                <div class="col-lg-6 fv-row">
+                                    <!--begin::Input-->
+                                    <select name="user_center_theme" class="form-select form-select-solid form-select-lg"
+                                            data-control="select2" data-hide-search="true">
+                                        #{foreach $themes as $theme}
+                                            <option value="#{$theme.info.KEY}" #{if $theme.info.KEY== $config.user_center_theme} selected #{/if}>
+                                                #{$theme.info.NAME} (v#{$theme.info.VERSION})
+                                                #{if $theme.have_update === true}
+                                                    -> 有更新(v#{$theme.update_version}) ‹ 请前往应用商店更新 ›
+                                                #{/if}
+                                            </option>
+                                        #{/foreach}
+                                    </select>
+                                    <!--end::Input-->
+                                </div>
+                                <div class="col-lg-2 fv-row">
+                                    <!--begin::Input-->
+                                    <button type="button" class="btn btn-light theme-user-setting"><i class="fa-duotone fa-regular fa-folder-gear"></i> 模板设置
+                                    </button>
+                                    <!--end::Input-->
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Input group-->
 
+                            <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="row mb-6">
                                 <!--begin::Label-->

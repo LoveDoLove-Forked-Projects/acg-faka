@@ -201,9 +201,10 @@
 
     function _CategoryDef() {
         _CateTable = new Table("/user/api/master/category", "#master_category");
-
+        _CateTable.setTree(1);
         _CateTable.setColumns([
-            {field: 'name', title: '主站名称', formatter: (_, __) => format.category(__)},
+            {field: 'icon', title: '#', type: "image"},
+            {field: 'name', title: '主站分类名称'},
             {
                 field: 'status',
                 title: '状态',
@@ -325,12 +326,14 @@
     function _ItemDef() {
         _ItemTable = new Table("/user/api/master/commodity", "#master_commodity");
         _ItemTable.setColumns([
-            {field: 'name', title: '商品名称', formatter: (_, __) => format.item(__)}
-            , {field: 'user_price', title: '会员价'}
-            , {field: 'price', title: '游客价'}
+            {field: 'cover', title: '#', type: "image"},
+            {field: 'name', title: '商品名称'}
+            , {field: 'user_price', title: '会员价', class: "normal"}
+            , {field: 'price', title: '游客价', class: "normal"}
             , {
                 field: 'status',
                 title: '状态',
+                class: "normal",
                 type: "button",
                 buttons: [
                     {
@@ -380,7 +383,7 @@
                 }
             }
             , {
-                field: 'premium', title: '加价百分比', formatter: function (val, item) {
+                field: 'premium', title: '加价百分比', class: "normal", formatter: function (val, item) {
                     if (!item.user_commodity || item.user_commodity.premium == 0) {
                         return '-';
                     }

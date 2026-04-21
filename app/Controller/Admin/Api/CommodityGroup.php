@@ -30,8 +30,6 @@ class CommodityGroup extends Manage
 
     /**
      * @return array
-     * @throws NotFoundException
-     * @throws \ReflectionException
      */
     public function data(): array
     {
@@ -47,15 +45,13 @@ class CommodityGroup extends Manage
      * @param Request $request
      * @return array
      * @throws JSONException
-     * @throws NotFoundException
-     * @throws RuntimeException
-     * @throws \ReflectionException
      */
     public function save(Request $request): array
     {
         $map = $request->post(flags: Filter::NORMAL);
         $save = new Save(\App\Model\CommodityGroup::class);
         $save->setMap($map);
+        $save->addForceMap("commodity_list", $map['commodity_list'] ?: []);
         $save = $this->query->save($save);
         if (!$save) {
             throw new JSONException("保存失败，请检查信息填写是否完整");
@@ -88,14 +84,14 @@ class CommodityGroup extends Manage
 
         foreach ($list as $category) {
             $id = Str::generateRandStr(16);
-            $hasCheckedChildren = false;
+            $hasCheckedChildren = 0;
             $children = [];
 
             if (!empty($category['children'])) {
                 foreach ($category['children'] as $child) {
                     $isChecked = in_array($child['id'], $commodityList);
                     if ($isChecked) {
-                        $hasCheckedChildren = true;
+                        $hasCheckedChildren++;
                     }
 
                     $children[] = [
@@ -105,15 +101,15 @@ class CommodityGroup extends Manage
                         'checked' => $isChecked
                     ];
                 }
-            }
 
-            // 一级分类
-            $result[] = [
-                'id' => $id,
-                'name' => $category['name'],
-                'pid' => 0,
-                'checked' => $hasCheckedChildren
-            ];
+                // 一级分类
+                $result[] = [
+                    'id' => $id,
+                    'name' => $category['name'],
+                    'pid' => 0,
+                    'checked' => count($category['children']) === $hasCheckedChildren
+                ];
+            }
 
             // 合并子项
             $result = array_merge($result, $children);

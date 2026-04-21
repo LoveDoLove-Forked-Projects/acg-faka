@@ -10,6 +10,7 @@ use App\Util\Ini;
 use App\Util\Str;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Query\Builder;
 use Kernel\Annotation\Inject;
 use Kernel\Container\Di;
 use Kernel\Exception\JSONException;
@@ -77,7 +78,7 @@ class Shared implements \App\Service\Shared
                 'timeout' => 30
             ]);
         } catch (\Exception $e) {
-            throw new JSONException("连接失败");
+            throw new JSONException("连接失败, 疑似被对方防火墙拦截");
         }
         $contents = $response->getBody()->getContents();
 
@@ -430,7 +431,11 @@ class Shared implements \App\Service\Shared
                 $data = $this->mcyRequest($shared->domain . "/plugin/open-api/sku/stock", $shared->app_id, $shared->app_key, [
                     'sku_id' => (int)$config['shared_mapping'][$race],
                 ]);
-                $result['count'] = (int)$data['stock'];
+                if (is_numeric($data['stock'])) {
+                    $result['count'] = (int)$data['stock'];
+                } else {
+                    $result['count'] = 999;
+                }
             }
 
             return $result;
@@ -445,6 +450,7 @@ class Shared implements \App\Service\Shared
     }
 
     /**
+     * @param Commodity $commodity
      * @param \App\Model\Shared $shared
      * @param string $code
      * @param string|null $race
@@ -453,12 +459,13 @@ class Shared implements \App\Service\Shared
      * @throws GuzzleException
      * @throws JSONException
      */
-    public function getItemStock(\App\Model\Shared $shared, string $code, ?string $race = null, ?array $sku = []): string
+    public function getItemStock(Commodity $commodity, \App\Model\Shared $shared, string $code, ?string $race = null, ?array $sku = []): string
     {
         if ($shared->type == 1) {
-            return "10000000";
+            $result = $this->inventory($shared, $commodity, $race);
+            return isset($result['count']) ? (string)$result['count'] : "0";
         } elseif ($shared->type == 2) {
-            return "10000000";
+            return "999";
         }
 
         $stock = $this->post($shared->domain . "/shared/commodity/stock", $shared->app_id, $shared->app_key, [
@@ -467,6 +474,44 @@ class Shared implements \App\Service\Shared
             "sku" => $sku
         ]);
         return $stock['stock'] ?? "0";
+    }
+
+    /**
+     * @param Commodity $commodity
+     * @param \App\Model\Shared $shared
+     * @param string $code
+     * @param int $num
+     * @param string|null $race
+     * @param array|null $sku
+     * @param int|null $cardId
+     * @return string|float|int
+     */
+    public function getValuation(Commodity $commodity, \App\Model\Shared $shared, string $code, int $num, ?string $race = null, ?array $sku = [], ?int $cardId = 0): string|float|int
+    {
+        try {
+            $config = is_array($commodity->config) ? $commodity->config : Ini::toArray($commodity->config);
+            if ($shared->type == 1) { //V4
+                $data = $this->mcyRequest($shared->domain . "/plugin/open-api/amount", $shared->app_id, $shared->app_key, [
+                    'sku_id' => (int)$config['shared_mapping'][$race],
+                    "quantity" => $num
+                ]);
+                return $data['amount'] ?? 0;
+            } elseif ($shared->type == 2) {
+                return 0;
+            }
+
+            $data = $this->post($shared->domain . "/shared/commodity/valuation", $shared->app_id, $shared->app_key, [
+                'code' => $code,
+                'num' => $num,
+                'race' => $race,
+                'sku' => $sku,
+                'card_id' => $cardId
+            ]);
+
+            return $data['price'] ?? 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
 

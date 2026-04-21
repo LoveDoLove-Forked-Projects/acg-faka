@@ -113,4 +113,27 @@ class File
         self::$cache[$path] = require($path);
         return self::$cache[$path];
     }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function exists(string $path): bool
+    {
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        $dir = dirname($path);
+        $file = basename($path);
+        if (!is_dir($dir)) {
+            return false;
+        }
+
+        $files = scandir($dir);
+        if ($files === false) {
+            return false;
+        }
+        return in_array($file, $files, true);
+    }
 }

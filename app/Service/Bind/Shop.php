@@ -382,7 +382,7 @@ class Shop implements \App\Service\Shop
         $hash = $this->getSharedStockHash($commodity->id, $race, $sku);
 
         if (!is_array($commodity->shared_stock) || !isset($commodity->shared_stock[$hash])) {
-            $stock = $this->shared->getItemStock($commodity->shared, $commodity->shared_code, $race, $sku);
+            $stock = $this->shared->getItemStock((clone $commodity), $commodity->shared, $commodity->shared_code, $race, $sku);
             $array = is_array($commodity->shared_stock) ? $commodity->shared_stock : [];
             $array[$hash] = $stock;
             Commodity::query()->where("id", $commodity->id)->update(["shared_stock" => $array]);

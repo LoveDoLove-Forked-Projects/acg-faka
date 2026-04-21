@@ -19,6 +19,13 @@ use Kernel\Util\View;
 abstract class User extends \App\Controller\Base\User
 {
     /**
+     * @var array|string[]
+     */
+    protected array $indexTemplateList = [
+        'INDEX', 'ITEM', 'QUERY', 'CLOSED'
+    ];
+
+    /**
      * @param string $title
      * @param string $template
      * @param array $data
@@ -71,20 +78,24 @@ abstract class User extends \App\Controller\Base\User
                 $data["config"][$k] = $v;
             }
 
-            if (Client::isMobile()) {
-                $theme = $cfg['user_mobile_theme'];
-                if ($data['config']['background_mobile_url']) {
-                    $data['config']['background_url'] = $data['config']['background_mobile_url'];
+            if (in_array($template, $this->indexTemplateList)) {
+                if (Client::isMobile()) {
+                    $theme = $cfg['user_mobile_theme'];
+                    if ($data['config']['background_mobile_url']) {
+                        $data['config']['background_url'] = $data['config']['background_mobile_url'];
+                    }
+
+                } else {
+                    $theme = $cfg['user_theme'];
                 }
 
+                if ($theme == "0") {
+                    $theme = $cfg['user_theme'];
+                }
             } else {
-                $theme = $cfg['user_theme'];
+                $theme = $cfg['user_center_theme'] ?: "Cartoon";
             }
 
-
-            if ($theme == "0") {
-                $theme = $cfg['user_theme'];
-            }
             //模板静态路径
             $data['static'] = "/app/View/User/Theme/" . $theme;
 

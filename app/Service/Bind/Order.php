@@ -138,7 +138,7 @@ class Order implements \App\Service\Order
         }
 
         if (!$commodity) {
-            throw new JSONException("商品不存在");
+            throw new JSONException("商品不存在#1");
         }
 
         $commodity = clone $commodity;
@@ -605,8 +605,12 @@ class Order implements \App\Service\Order
             }
         }
 
+        $rent = 0;
+
         if ($commodity->shared) {
-            $stock = $this->shared->getItemStock($commodity->shared, $commodity->shared_code, $race ?: null, $sku ?: []);
+            $stock = $this->shared->getItemStock((clone $commodity), $commodity->shared, $commodity->shared_code, $race ?: null, $sku ?: []);
+            //询价
+            $rent = $this->shared->getValuation((clone $commodity), $commodity->shared, $commodity->shared_code, $num, $race, $sku, $cardId);
         } else {
             $stock = $shopService->getItemStock($commodity, $race, $sku);
         }
@@ -624,7 +628,7 @@ class Order implements \App\Service\Order
 
         //计算订单价格
         $amount = $this->valuation($commodity, $num, $race, $sku, $cardId, $coupon, $userGroup);
-        $rent = $this->getCost($commodity, $num, $race, $sku, $cardId);
+        $rent == 0 && $rent = $this->getCost($commodity, $num, $race, $sku, $cardId);
         $rebate = 0;
         $divideAmount = 0;
 
