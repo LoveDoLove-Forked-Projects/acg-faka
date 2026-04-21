@@ -123,7 +123,7 @@ abstract class User extends \App\Controller\Base\User
             $system = true;
 
             //判断路径是否存在
-            if (key_exists($template, $config['theme'])) {
+            if (!empty($config['theme']) && key_exists($template, $config['theme'])) {
                 $path = $themePath . $config['theme'][$template];
                 $system = false;
             }
