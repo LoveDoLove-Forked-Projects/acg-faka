@@ -39,7 +39,7 @@ class Plugin
         $submitPath = $path . '/Config/Submit.php';
         $submitJsPath = $path . '/Config/Submit.js';
         $configPath = $path . '/Config/Config.php';
-        if (!file_exists($infoPath) || !file_exists($submitPath) || !file_exists($configPath)) {
+        if (!file_exists($infoPath)) {
             return null;
         }
 
@@ -112,7 +112,9 @@ class Plugin
                         $arguments = $attribute->getArguments();
                         if ($attribute->newInstance() instanceof \Kernel\Annotation\Plugin) {
                             if ($arguments['state'] == $state) {
-                                call_user_func_array([new $namespace, $method->getName()], $args);
+                                $obj = new $namespace();
+                                Di::inst()->inject($obj);
+                                call_user_func_array([$obj, $method->getName()], $args);
                             }
                         }
                     }
